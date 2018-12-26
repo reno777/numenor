@@ -1,25 +1,49 @@
 #This is the output file for the deployment script
 
-output "Public IP" {
+output "MIRROR-HTTPS IP" {
     value = "${digitalocean_droplet.https-redir.ipv4_address}"
 }
 
-output "Name" {
-    value = "${digitalocean_droplet.https-redir.name}"
+output "MIRROR-HTTPS FQDN" {
+    value = "${digitalocean_record.https-redir.fqdn}"
 }
 
-output "Public IP" {
+output "MIRROR-LHTTPS IP" {
     value = "${digitalocean_droplet.lhttps-redir.ipv4_address}"
 }
 
-output "Name" {
-    value = "${digitalocean_droplet.lhttps-redir.name}"
+output "MIRROR-LHTTPS FQDN" {
+    value = "${digitalocean_record.lhttps-redir.fqdn}"
 }
 
-output "Public IP" {
+output "MIRROR-DNS IP" {
     value = "${digitalocean_droplet.dns-redir.ipv4_address}"
 }
 
-output "Name" {
-    value = "${digitalocean_droplet.dns-redir.name}"
+output "C2-HTTPS IP" {
+    value = "${digitalocean_droplet.c2-https.ipv4_address}"
+}
+
+output "C2-LHTTPS IP" {
+    value = "${digitalocean_droplet.c2-lhttps.ipv4_address}"
+}
+
+output "C2-DNS IP" {
+    value = "${digitalocean_droplet.c2-dns.ipv4_address}"
+}
+
+output "JUMPHOST IP" {
+    value = "${digitalocean_droplet.jump.ipv4_address}"
+}
+
+output "JUMP-HTTPS FQDN" {
+    value = "${digitalocean_record.jump-https.fqdn}"
+}
+
+output "JUMP-HTTPS FQDN" {
+    value = "${digitalocean_record.jump-lhttps.fqdn}"
+}
+
+output "JUMP-HTTPS FQDN" {
+    value = "${digitalocean_record.jump-dns.fqdn}"
 }
