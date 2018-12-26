@@ -40,10 +40,10 @@ output "JUMP-HTTPS FQDN" {
     value = "${digitalocean_record.jump-https.fqdn}"
 }
 
-output "JUMP-HTTPS FQDN" {
+output "JUMP-LHTTPS FQDN" {
     value = "${digitalocean_record.jump-lhttps.fqdn}"
 }
 
-output "JUMP-HTTPS FQDN" {
+output "JUMP-DNS FQDN" {
     value = "${digitalocean_record.jump-dns.fqdn}"
 }
