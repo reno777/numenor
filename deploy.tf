@@ -87,7 +87,18 @@ resource "digitalocean_droplet" "c2-https" {
     ssh_keys = [
         "${data.digitalocean_ssh_key.eradluin.fingerprint}"
     ]
+
+    provisioner "file" {
+        source          = "/cobaltstrike"
+        destination     = "/."
     
+        connection {
+            user        = "root"
+            type        = "ssh"
+            private_key = "${chomp(file(var.sshkey_pvt))}"
+            timeout     = "2m"
+        }
+    }
 }
 
 resource "digitalocean_droplet" "c2-lhttps" {
@@ -103,6 +114,17 @@ resource "digitalocean_droplet" "c2-lhttps" {
         "${data.digitalocean_ssh_key.eradluin.fingerprint}"
     ]
     
+    provisioner "file" {
+        source          = "/cobaltstrike"
+        destination     = "/."
+    
+        connection {
+            user        = "root"
+            type        = "ssh"
+            private_key = "${chomp(file(var.sshkey_pvt))}"
+            timeout     = "2m"
+        }
+    }
 }
 
 resource "digitalocean_droplet" "c2-dns" {
@@ -118,6 +140,17 @@ resource "digitalocean_droplet" "c2-dns" {
         "${data.digitalocean_ssh_key.eradluin.fingerprint}"
     ]
     
+    provisioner "file" {
+        source          = "/cobaltstrike"
+        destination     = "/."
+    
+        connection {
+            user        = "root"
+            type        = "ssh"
+            private_key = "${chomp(file(var.sshkey_pvt))}"
+            timeout     = "2m"
+        }
+    }
 }
 
 resource "digitalocean_record" "https-redir" {
