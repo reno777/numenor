@@ -29,6 +29,22 @@ resource "digitalocean_droplet" "jump" {
     ssh_keys = [
         "${data.digitalocean_ssh_key.eradluin.fingerprint}"
     ]
+
+    provisioner "remote-exec" {
+        inline = [
+            "export DEBIAN_FRONTEND=noninteractive",
+            "apt update",
+            "apt -o Dpkg::Options::='--force-confold' upgrade -y",
+            "apt -o Dpkg::Options::='--force-confold' dist-upgrade -y",
+        ]
+    
+        connection {
+            user        = "root"
+            type        = "ssh"
+            private_key = "${chomp(file(var.sshkey_pvt))}"
+            timeout     = "2m"
+        }
+    }
     
 }
 
@@ -44,6 +60,22 @@ resource "digitalocean_droplet" "https-redir" {
     ssh_keys = [
         "${data.digitalocean_ssh_key.eradluin.fingerprint}"
     ]
+
+    provisioner "remote-exec" {
+        inline = [
+            "export DEBIAN_FRONTEND=noninteractive",
+            "apt update",
+            "apt -o Dpkg::Options::='--force-confold' upgrade -y",
+            "apt -o Dpkg::Options::='--force-confold' dist-upgrade -y",
+        ]
+    
+        connection {
+            user        = "root"
+            type        = "ssh"
+            private_key = "${chomp(file(var.sshkey_pvt))}"
+            timeout     = "2m"
+        }
+    }
     
 }
 
@@ -59,6 +91,22 @@ resource "digitalocean_droplet" "lhttps-redir" {
     ssh_keys = [
         "${data.digitalocean_ssh_key.eradluin.fingerprint}"
     ]
+
+    provisioner "remote-exec" {
+        inline = [
+            "export DEBIAN_FRONTEND=noninteractive",
+            "apt update",
+            "apt -o Dpkg::Options::='--force-confold' upgrade -y",
+            "apt -o Dpkg::Options::='--force-confold' dist-upgrade -y",
+        ]
+    
+        connection {
+            user        = "root"
+            type        = "ssh"
+            private_key = "${chomp(file(var.sshkey_pvt))}"
+            timeout     = "2m"
+        }
+    }
     
 }
 
@@ -74,6 +122,22 @@ resource "digitalocean_droplet" "dns-redir" {
     ssh_keys = [
         "${data.digitalocean_ssh_key.eradluin.fingerprint}"
     ]
+
+    provisioner "remote-exec" {
+        inline = [
+            "export DEBIAN_FRONTEND=noninteractive",
+            "apt update",
+            "apt -o Dpkg::Options::='--force-confold' upgrade -y",
+            "apt -o Dpkg::Options::='--force-confold' dist-upgrade -y",
+        ]
+    
+        connection {
+            user        = "root"
+            type        = "ssh"
+            private_key = "${chomp(file(var.sshkey_pvt))}"
+            timeout     = "2m"
+        }
+    }
     
 }
 
@@ -159,6 +223,9 @@ resource "digitalocean_droplet" "c2-lhttps" {
             "add-apt-repository ppa:webupd8team/java -y",
             "echo 'oracle-java8-installer shared/accepted-oracle-license-v1-1 select true' | sudo debconf-set-selections",
             "apt install oracle-java8-installer -y",
+            "cd /cobaltstrike",
+            "chmod 700 update",
+            "echo ${var.cs_key} | ./update",
         ]
     
         connection {
@@ -204,6 +271,9 @@ resource "digitalocean_droplet" "c2-dns" {
             "add-apt-repository ppa:webupd8team/java -y",
             "echo 'oracle-java8-installer shared/accepted-oracle-license-v1-1 select true' | sudo debconf-set-selections",
             "apt install oracle-java8-installer -y",
+            "cd /cobaltstrike",
+            "chmod 700 update",
+            "echo ${var.cs_key} | ./update",
         ]
     
         connection {
