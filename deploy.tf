@@ -99,6 +99,23 @@ resource "digitalocean_droplet" "c2-https" {
             timeout     = "2m"
         }
     }
+
+    provisioner "remote-exec" {
+        inline = [
+            "apt update",
+            "apt upgrade -y",
+            "add-apt-repository ppa:webupd8team/java",
+            "apt update",
+            "apt install oracle-java8-installer -y",
+        ]
+    
+        connection {
+            user        = "root"
+            type        = "ssh"
+            private_key = "${chomp(file(var.sshkey_pvt))}"
+            timeout     = "2m"
+        }
+    }
 }
 
 resource "digitalocean_droplet" "c2-lhttps" {
