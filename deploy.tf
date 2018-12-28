@@ -102,8 +102,8 @@ resource "digitalocean_droplet" "c2-https" {
 
     provisioner "remote-exec" {
         inline = [
-            "apt update",
-            "apt upgrade -y",
+            "export DEBIAN_FRONTEND=noninteractive",
+            "apt update && apt -o Dpkg::Options::='--force-confold' upgrade -q -y --force-yes && apt -o Dpkg::Options::='--force-confold' dist-upgrade -q -y --force-yes",
             "add-apt-repository ppa:webupd8team/java",
             "apt update",
             "apt install oracle-java8-installer -y",
