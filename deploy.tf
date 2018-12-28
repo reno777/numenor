@@ -6,6 +6,8 @@ variable "sshkey_pvt"        {}
 variable "domain_front1"     {}
 variable "domain_front2"     {}
 variable "domain_main"       {}
+variable "cs_key"            {}
+
 
 provider "digitalocean" {} #Make sure to run `export DIGITALOCEAN_TOKEN="ApiKeyGoesHere"` and add this to your .bashrc as well. This will be depreceated after Vault is implimented.
 
@@ -109,6 +111,9 @@ resource "digitalocean_droplet" "c2-https" {
             "add-apt-repository ppa:webupd8team/java -y",
             "echo 'oracle-java8-installer shared/accepted-oracle-license-v1-1 select true' | sudo debconf-set-selections",
             "apt install oracle-java8-installer -y",
+            "cd /cobaltstrike",
+            "chmod 700 update",
+            "echo ${var.cs_key} | ./update",
         ]
     
         connection {
