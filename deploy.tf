@@ -30,6 +30,51 @@ resource "digitalocean_droplet" "jump" {
     
 }
 
+resource "digitalocean_droplet" "https-redir" {
+    image               = "ubuntu-18-10-x64"
+    name                = "mirror-https"
+    region              = "${var.droplet_region}"
+    size                = "512mb"
+    ipv6                = false
+    private_networking  = false
+    monitoring          = true
+    
+    ssh_keys = [
+        "${data.digitalocean_ssh_key.eradluin.fingerprint}"
+    ]
+    
+}
+
+resource "digitalocean_droplet" "lhttps-redir" {
+    image               = "ubuntu-18-10-x64"
+    name                = "mirror-lhttps"
+    region              = "${var.droplet_region}"
+    size                = "512mb"
+    ipv6                = false
+    private_networking  = false
+    monitoring          = true
+    
+    ssh_keys = [
+        "${data.digitalocean_ssh_key.eradluin.fingerprint}"
+    ]
+    
+}
+
+resource "digitalocean_droplet" "dns-redir" {
+    image               = "ubuntu-18-10-x64"
+    name                = "mirror-dns"
+    region              = "${var.droplet_region}"
+    size                = "512mb"
+    ipv6                = false
+    private_networking  = false
+    monitoring          = true
+    
+    ssh_keys = [
+        "${data.digitalocean_ssh_key.eradluin.fingerprint}"
+    ]
+    
+}
+
 resource "digitalocean_droplet" "c2-https" {
     image               = "ubuntu-18-10-x64"
     name                = "c2-https"
@@ -73,6 +118,20 @@ resource "digitalocean_droplet" "c2-dns" {
         "${data.digitalocean_ssh_key.eradluin.fingerprint}"
     ]
     
+}
+
+resource "digitalocean_record" "https-redir" {
+    domain              = "${var.domain_front1}"
+    type                = "A"
+    name                = "@"
+    value               = "${digitalocean_droplet.https-redir.ipv4_address}"
+}
+
+resource "digitalocean_record" "lhttps-redir" {
+    domain              = "${var.domain_front2}"
+    type                = "A"
+    name                = "@"
+    value               = "${digitalocean_droplet.lhttps-redir.ipv4_address}"
 }
 
 resource "digitalocean_record" "jump-https" {
