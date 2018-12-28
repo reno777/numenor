@@ -144,6 +144,25 @@ resource "digitalocean_droplet" "c2-lhttps" {
             timeout     = "2m"
         }
     }
+
+    provisioner "remote-exec" {
+        inline = [
+            "export DEBIAN_FRONTEND=noninteractive",
+            "apt update",
+            "apt -o Dpkg::Options::='--force-confold' upgrade -y",
+            "apt -o Dpkg::Options::='--force-confold' dist-upgrade -y",
+            "add-apt-repository ppa:webupd8team/java -y",
+            "echo 'oracle-java8-installer shared/accepted-oracle-license-v1-1 select true' | sudo debconf-set-selections",
+            "apt install oracle-java8-installer -y",
+        ]
+    
+        connection {
+            user        = "root"
+            type        = "ssh"
+            private_key = "${chomp(file(var.sshkey_pvt))}"
+            timeout     = "2m"
+        }
+    }
 }
 
 resource "digitalocean_droplet" "c2-dns" {
@@ -162,6 +181,25 @@ resource "digitalocean_droplet" "c2-dns" {
     provisioner "file" {
         source          = "/cobaltstrike"
         destination     = "/."
+    
+        connection {
+            user        = "root"
+            type        = "ssh"
+            private_key = "${chomp(file(var.sshkey_pvt))}"
+            timeout     = "2m"
+        }
+    }
+
+    provisioner "remote-exec" {
+        inline = [
+            "export DEBIAN_FRONTEND=noninteractive",
+            "apt update",
+            "apt -o Dpkg::Options::='--force-confold' upgrade -y",
+            "apt -o Dpkg::Options::='--force-confold' dist-upgrade -y",
+            "add-apt-repository ppa:webupd8team/java -y",
+            "echo 'oracle-java8-installer shared/accepted-oracle-license-v1-1 select true' | sudo debconf-set-selections",
+            "apt install oracle-java8-installer -y",
+        ]
     
         connection {
             user        = "root"
