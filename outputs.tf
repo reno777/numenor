@@ -27,3 +27,7 @@ output "JUMP-LHTTPS FQDN" {
 output "JUMP-DNS FQDN" {
     value = "${digitalocean_record.jump-dns.fqdn}"
 }
+
+output "c2-https id" {
+    value = "${digitalocean_droplet.c2-https.id}"
+}
