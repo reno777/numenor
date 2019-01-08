@@ -1,0 +1,29 @@
+###NOTE: In order for this to work as the .tfvars file in terraform you must place it in the same directory as the deploy.tf script and rename it to "terraform.tfvars".
+
+#-------------------------------------------------------------#
+#                       Digital Ocean                         #
+#-------------------------------------------------------------#
+
+droplet_region     = "nyc1" #Available regions: nyc,sfo,ams,sgp,lon,fra,tor,blr NOTE: Each region will be followed by a number: 1-3 ###Selects the region of the machines, future plans: randomize location for relfectors
+#droplet_size       = "s-1vcpu-2gb"   #Available Sizes: c-2,512mb,1gb,2gb,4gb,8gb,16gb,32gb,48gb,s-1vcpu-1gb,s-1vcpu-2gb,s-1vcpu-3gb,s-2vcpu-2gb,s-2vcpu-4gb,s-3vcpu-1gb,s-4vcpu-8gb,s-6vcpu-16gb,s-8vcpu-32gb,s-12vcpu-48gb,s-16vcpu-64gb ###DEPRECEATED!!! This remains for reference for all the size slugs available in DO! Could be reused in the future.
+
+#-------------------------------------------------------------#
+#                            SSH                              #
+#-------------------------------------------------------------#
+
+sshkey_pvt         = "<This is the location of your private key that will be used to configure the Machines! I.E. ~/.ssh/id_rsa>"
+sshkey_name        = "<This is the EXACT name of your ssh key in DO!>"
+
+#-------------------------------------------------------------#
+#                          Domain                             #
+#-------------------------------------------------------------#
+
+domain_front1      = "<HTTPS domain name goes here!>"
+domain_front2      = "<LHTTPS domain name goes here!>"
+domain_main        = "<The main domain name goes here!>"
+
+#-------------------------------------------------------------#
+#                       Cobalt Strike                         #
+#-------------------------------------------------------------#
+
+cs_key             = "<Cobalt Strike Key Goes Here!>"
