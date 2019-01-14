@@ -20,7 +20,7 @@ data "digitalocean_ssh_key" "ssh_key_pub_seth" {
 }
 
 resource "digitalocean_droplet" "jump" {
-    image               = "ubuntu-18-10-x64"
+    image               = "ubuntu-18-04-x64"
     name                = "jumphost"
     region              = "${var.droplet_region}"
     size                = "512mb"
@@ -36,8 +36,7 @@ resource "digitalocean_droplet" "jump" {
         inline = [
             "export DEBIAN_FRONTEND=noninteractive",
             "apt update",
-            "apt -o Dpkg::Options::='--force-confold' upgrade -y",
-            "apt -o Dpkg::Options::='--force-confold' dist-upgrade -y",
+            "apt upgrade -y",
         ]
     
         connection {
@@ -51,7 +50,7 @@ resource "digitalocean_droplet" "jump" {
 }
 
 resource "digitalocean_droplet" "https-redir" {
-    image               = "ubuntu-18-10-x64"
+    image               = "ubuntu-18-04-x64"
     name                = "mirror-https"
     region              = "${var.droplet_region}"
     size                = "512mb"
@@ -67,8 +66,7 @@ resource "digitalocean_droplet" "https-redir" {
         inline = [
             "export DEBIAN_FRONTEND=noninteractive",
             "apt update",
-            "apt -o Dpkg::Options::='--force-confold' upgrade -y",
-            "apt -o Dpkg::Options::='--force-confold' dist-upgrade -y",
+            "apt upgrade -y",
         ]
     
         connection {
@@ -82,7 +80,7 @@ resource "digitalocean_droplet" "https-redir" {
 }
 
 resource "digitalocean_droplet" "lhttps-redir" {
-    image               = "ubuntu-18-10-x64"
+    image               = "ubuntu-18-04-x64"
     name                = "mirror-lhttps"
     region              = "${var.droplet_region}"
     size                = "512mb"
@@ -98,8 +96,7 @@ resource "digitalocean_droplet" "lhttps-redir" {
         inline = [
             "export DEBIAN_FRONTEND=noninteractive",
             "apt update",
-            "apt -o Dpkg::Options::='--force-confold' upgrade -y",
-            "apt -o Dpkg::Options::='--force-confold' dist-upgrade -y",
+            "apt upgrade -y",
         ]
     
         connection {
@@ -113,7 +110,7 @@ resource "digitalocean_droplet" "lhttps-redir" {
 }
 
 resource "digitalocean_droplet" "dns-redir" {
-    image               = "ubuntu-18-10-x64"
+    image               = "ubuntu-18-04-x64"
     name                = "mirror-dns"
     region              = "${var.droplet_region}"
     size                = "512mb"
@@ -129,8 +126,7 @@ resource "digitalocean_droplet" "dns-redir" {
         inline = [
             "export DEBIAN_FRONTEND=noninteractive",
             "apt update",
-            "apt -o Dpkg::Options::='--force-confold' upgrade -y",
-            "apt -o Dpkg::Options::='--force-confold' dist-upgrade -y",
+            "apt upgrade -y",
         ]
     
         connection {
@@ -144,7 +140,7 @@ resource "digitalocean_droplet" "dns-redir" {
 }
 
 resource "digitalocean_droplet" "c2-https" {
-    image               = "ubuntu-18-10-x64"
+    image               = "ubuntu-18-04-x64"
     name                = "c2-https"
     region              = "${var.droplet_region}"
     size                = "2gb"
@@ -172,8 +168,7 @@ resource "digitalocean_droplet" "c2-https" {
         inline = [
             "export DEBIAN_FRONTEND=noninteractive",
             "apt update",
-            "apt -o Dpkg::Options::='--force-confold' upgrade -y",
-            "apt -o Dpkg::Options::='--force-confold' dist-upgrade -y",
+            "apt upgrade -y",
             "add-apt-repository ppa:webupd8team/java -y",
             "echo 'oracle-java8-installer shared/accepted-oracle-license-v1-1 select true' | sudo debconf-set-selections",
             "apt install oracle-java8-installer -y",
@@ -192,7 +187,7 @@ resource "digitalocean_droplet" "c2-https" {
 }
 
 resource "digitalocean_droplet" "c2-lhttps" {
-    image               = "ubuntu-18-10-x64"
+    image               = "ubuntu-18-04-x64"
     name                = "c2-lhttps"
     region              = "${var.droplet_region}"
     size                = "2gb"
@@ -220,8 +215,7 @@ resource "digitalocean_droplet" "c2-lhttps" {
         inline = [
             "export DEBIAN_FRONTEND=noninteractive",
             "apt update",
-            "apt -o Dpkg::Options::='--force-confold' upgrade -y",
-            "apt -o Dpkg::Options::='--force-confold' dist-upgrade -y",
+            "apt upgrade -y",
             "add-apt-repository ppa:webupd8team/java -y",
             "echo 'oracle-java8-installer shared/accepted-oracle-license-v1-1 select true' | sudo debconf-set-selections",
             "apt install oracle-java8-installer -y",
@@ -240,7 +234,7 @@ resource "digitalocean_droplet" "c2-lhttps" {
 }
 
 resource "digitalocean_droplet" "c2-dns" {
-    image               = "ubuntu-18-10-x64"
+    image               = "ubuntu-18-04-x64"
     name                = "c2-dns"
     region              = "${var.droplet_region}"
     size                = "2gb"
@@ -268,8 +262,7 @@ resource "digitalocean_droplet" "c2-dns" {
         inline = [
             "export DEBIAN_FRONTEND=noninteractive",
             "apt update",
-            "apt -o Dpkg::Options::='--force-confold' upgrade -y",
-            "apt -o Dpkg::Options::='--force-confold' dist-upgrade -y",
+            "apt upgrade -y",
             "add-apt-repository ppa:webupd8team/java -y",
             "echo 'oracle-java8-installer shared/accepted-oracle-license-v1-1 select true' | sudo debconf-set-selections",
             "apt install oracle-java8-installer -y",
