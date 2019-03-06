@@ -37,6 +37,7 @@ resource "digitalocean_droplet" "jump" {
             "export DEBIAN_FRONTEND=noninteractive",
             "apt update",
             "apt upgrade -y",
+            "apt auto-remove -y",
         ]
     
         connection {
@@ -67,6 +68,7 @@ resource "digitalocean_droplet" "https-redir" {
             "export DEBIAN_FRONTEND=noninteractive",
             "apt update",
             "apt upgrade -y",
+	    "apt auto-remove -y",
         ]
     
         connection {
@@ -97,6 +99,7 @@ resource "digitalocean_droplet" "lhttps-redir" {
             "export DEBIAN_FRONTEND=noninteractive",
             "apt update",
             "apt upgrade -y",
+            "apt auto-remove -y",
         ]
     
         connection {
@@ -127,6 +130,7 @@ resource "digitalocean_droplet" "dns-redir" {
             "export DEBIAN_FRONTEND=noninteractive",
             "apt update",
             "apt upgrade -y",
+            "apt auto-remove -y",
         ]
     
         connection {
@@ -169,6 +173,7 @@ resource "digitalocean_droplet" "c2-https" {
             "export DEBIAN_FRONTEND=noninteractive",
             "apt update",
             "apt upgrade -y",
+            "apt auto-remove -y",
             "add-apt-repository ppa:webupd8team/java -y",
             "echo 'oracle-java8-installer shared/accepted-oracle-license-v1-1 select true' | sudo debconf-set-selections",
             "apt install oracle-java8-installer -y",
@@ -216,6 +221,7 @@ resource "digitalocean_droplet" "c2-lhttps" {
             "export DEBIAN_FRONTEND=noninteractive",
             "apt update",
             "apt upgrade -y",
+            "apt auto-remove -y",
             "add-apt-repository ppa:webupd8team/java -y",
             "echo 'oracle-java8-installer shared/accepted-oracle-license-v1-1 select true' | sudo debconf-set-selections",
             "apt install oracle-java8-installer -y",
@@ -263,6 +269,7 @@ resource "digitalocean_droplet" "c2-dns" {
             "export DEBIAN_FRONTEND=noninteractive",
             "apt update",
             "apt upgrade -y",
+            "apt auto-remove -y",
             "add-apt-repository ppa:webupd8team/java -y",
             "echo 'oracle-java8-installer shared/accepted-oracle-license-v1-1 select true' | sudo debconf-set-selections",
             "apt install oracle-java8-installer -y",
