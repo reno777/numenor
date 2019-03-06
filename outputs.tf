@@ -47,3 +47,6 @@ output "MIRROR-LHTTPS FQDN" {
 output "MIRROR-DNS IP" {
     value = "${digitalocean_droplet.dns-redir.ipv4_address}"
 }
+
+output "CS PASSWORD" {
+    value = "${random_string.cs_password.result}"

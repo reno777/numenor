@@ -19,6 +19,11 @@ data "digitalocean_ssh_key" "ssh_key_pub_seth" {
     name                = "${var.sshkey_name}" 
 }
 
+resource "random_string" "cs_password" {
+    length = 16
+    special = false
+}
+
 resource "digitalocean_droplet" "jump" {
     image               = "ubuntu-18-04-x64"
     name                = "jumphost"
