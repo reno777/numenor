@@ -20,8 +20,8 @@ data "digitalocean_ssh_key" "ssh_key_pub_seth" {
 }
 
 resource "random_string" "cs_password" {
-    length = 16
-    special = false
+    length              = 16
+    special             = false
 }
 
 resource "digitalocean_droplet" "jump" {
@@ -43,6 +43,17 @@ resource "digitalocean_droplet" "jump" {
             "apt update",
             "apt upgrade -y",
             "apt auto-remove -y",
+            "echo 1 > /proc/sys/net/ipv4/ip_forward",
+            "iptables -F",
+            "iptables -t nat -F",
+            "iptables -X",
+            "iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT",
+            "iptables -t nat -A PREROUTING -p tcp --dport 56651 -j DNAT --to-destination ${digitalocean_droplet.c2-https.ipv4_address}:50050",
+            "iptables -t nat -A POSTROUTING -p tcp -d ${digitalocean_droplet.c2-https.ipv4_address} --dport 50050 -j SNAT --to-source ${digitalocean_droplet.jump.ipv4_address}",
+            "iptables -t nat -A PREROUTING -p tcp --dport 56652 -j DNAT --to-destination ${digitalocean_droplet.c2-lhttps.ipv4_address}:50050",
+            "iptables -t nat -A POSTROUTING -p tcp -d ${digitalocean_droplet.c2-lhttps.ipv4_address} --dport 50050 -j SNAT --to-source ${digitalocean_droplet.jump.ipv4_address}",
+            "iptables -t nat -A PREROUTING -p tcp --dport 56653 -j DNAT --to-destination ${digitalocean_droplet.c2-dns.ipv4_address}:50050",
+            "iptables -t nat -A POSTROUTING -p tcp -d ${digitalocean_droplet.c2-dns.ipv4_address} --dport 50050 -j SNAT --to-source ${digitalocean_droplet.jump.ipv4_address}",
         ]
     
         connection {
