@@ -50,3 +50,4 @@ output "MIRROR-DNS IP" {
 
 output "CS PASSWORD" {
     value = "${random_string.cs_password.result}"
+}

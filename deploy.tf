@@ -183,8 +183,9 @@ resource "digitalocean_droplet" "c2-https" {
             "echo 'oracle-java8-installer shared/accepted-oracle-license-v1-1 select true' | sudo debconf-set-selections",
             "apt install oracle-java8-installer -y",
             "cd /cobaltstrike",
-            "chmod 700 update",
+            "chmod 700 update && chmod 700 teamserver",
             "echo ${var.cs_key} | ./update",
+            "tmux new-session -d -s cobalt_strike 'cd /cobaltstrike; ./teamserver ${digitalocean_droplet.c2-https.ipv4_address} ${random_string.cs_password.result}'",
         ]
     
         connection {
@@ -231,8 +232,9 @@ resource "digitalocean_droplet" "c2-lhttps" {
             "echo 'oracle-java8-installer shared/accepted-oracle-license-v1-1 select true' | sudo debconf-set-selections",
             "apt install oracle-java8-installer -y",
             "cd /cobaltstrike",
-            "chmod 700 update",
+            "chmod 700 update && chmod 700 teamserver",
             "echo ${var.cs_key} | ./update",
+            "tmux new-session -d -s cobalt_strike 'cd /cobaltstrike; ./teamserver ${digitalocean_droplet.c2-lhttps.ipv4_address} ${random_string.cs_password.result}'",
         ]
     
         connection {
@@ -279,8 +281,9 @@ resource "digitalocean_droplet" "c2-dns" {
             "echo 'oracle-java8-installer shared/accepted-oracle-license-v1-1 select true' | sudo debconf-set-selections",
             "apt install oracle-java8-installer -y",
             "cd /cobaltstrike",
-            "chmod 700 update",
+            "chmod 700 update && chmod 700 teamserver",
             "echo ${var.cs_key} | ./update",
+            "tmux new-session -d -s cobalt_strike 'cd /cobaltstrike; ./teamserver ${digitalocean_droplet.c2-dns.ipv4_address} ${random_string.cs_password.result}'",
         ]
     
         connection {
