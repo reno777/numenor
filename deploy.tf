@@ -10,12 +10,12 @@ variable "cs_key"            {}
 variable "sshkey_name"       {}
 
 
-provider "digitalocean" {} #Make sure to run `export DIGITALOCEAN_TOKEN="ApiKeyGoesHere"` and add this to your .bashrc as well. This will be depreceated after Vault is implimented.
+provider "digitalocean"      {} #Make sure to run `export DIGITALOCEAN_TOKEN="ApiKeyGoesHere"` and add this to your .bashrc as well. This will be depreceated after Vault is implimented.
 
 #This section can be used as a template for more ssh keys to be added on spin up. 
 #As of now the ssh keys needed to be added manually to DO and the exact name should be noted such as the one below.
 
-data "digitalocean_ssh_key" "ssh_key_pub_seth" {
+data "digitalocean_ssh_key" "ssh_key_pub_main" {
     name                = "${var.sshkey_name}" 
 }
 
@@ -34,7 +34,7 @@ resource "digitalocean_droplet" "jump" {
     monitoring          = true
     
     ssh_keys = [
-        "${data.digitalocean_ssh_key.ssh_key_pub_seth.fingerprint}"
+        "${data.digitalocean_ssh_key.ssh_key_pub_main.fingerprint}"
     ]
 
     provisioner "remote-exec" {
@@ -76,7 +76,7 @@ resource "digitalocean_droplet" "https-redir" {
     monitoring          = true
     
     ssh_keys = [
-        "${data.digitalocean_ssh_key.ssh_key_pub_seth.fingerprint}"
+        "${data.digitalocean_ssh_key.ssh_key_pub_main.fingerprint}"
     ]
 
     provisioner "remote-exec" {
@@ -107,7 +107,7 @@ resource "digitalocean_droplet" "lhttps-redir" {
     monitoring          = true
     
     ssh_keys = [
-        "${data.digitalocean_ssh_key.ssh_key_pub_seth.fingerprint}"
+        "${data.digitalocean_ssh_key.ssh_key_pub_main.fingerprint}"
     ]
 
     provisioner "remote-exec" {
@@ -138,7 +138,7 @@ resource "digitalocean_droplet" "dns-redir" {
     monitoring          = true
     
     ssh_keys = [
-        "${data.digitalocean_ssh_key.ssh_key_pub_seth.fingerprint}"
+        "${data.digitalocean_ssh_key.ssh_key_pub_main.fingerprint}"
     ]
 
     provisioner "remote-exec" {
@@ -169,7 +169,7 @@ resource "digitalocean_droplet" "c2-https" {
     monitoring          = true
     
     ssh_keys = [
-        "${data.digitalocean_ssh_key.ssh_key_pub_seth.fingerprint}"
+        "${data.digitalocean_ssh_key.ssh_key_pub_main.fingerprint}"
     ]
 
     provisioner "file" {
@@ -218,7 +218,7 @@ resource "digitalocean_droplet" "c2-lhttps" {
     monitoring          = true
     
     ssh_keys = [
-        "${data.digitalocean_ssh_key.ssh_key_pub_seth.fingerprint}"
+        "${data.digitalocean_ssh_key.ssh_key_pub_main.fingerprint}"
     ]
     
     provisioner "file" {
@@ -267,7 +267,7 @@ resource "digitalocean_droplet" "c2-dns" {
     monitoring          = true
     
     ssh_keys = [
-        "${data.digitalocean_ssh_key.ssh_key_pub_seth.fingerprint}"
+        "${data.digitalocean_ssh_key.ssh_key_pub_main.fingerprint}"
     ]
     
     provisioner "file" {
