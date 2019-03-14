@@ -1,4 +1,6 @@
-#Main terraform script for the BGP Infrastructure
+#Main terraform script for the Red Team Infrastructure
+#By: 0xreno
+#License: GNU GPL v3
 
 #Declare variables
 variable "droplet_region"    {}
