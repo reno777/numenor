@@ -1,2 +1,2 @@
 # new-infra
-Proof of concept infrastructure 
+Red Team Infrastructure 
