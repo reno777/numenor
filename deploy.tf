@@ -21,8 +21,12 @@ data "digitalocean_ssh_key" "ssh_key_pub_main" {
     name                = "${var.sshkey_name}" 
 }
 
+data "http" "local_ip" {
+    url                 = "http://ipv4.icanhazip.com"
+}
+
 resource "random_string" "cs_password" {
-    length              = 16
+    length              = 24
     special             = false
 }
 
@@ -87,6 +91,22 @@ resource "digitalocean_droplet" "https-redir" {
             "apt update",
             "apt upgrade -y",
 	    "apt auto-remove -y",
+            "echo 1 > /proc/sys/net/ipv4/ip_forward",
+            "iptables -F",
+            "iptables -t nat -F",
+            "iptables -X",
+            "iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT",
+            "iptables -t nat -A PREROUTING -p tcp --dport 443 -j DNAT --to-destination ${digitalocean_droplet.c2-https.ipv4_address}:443",
+            "iptables -t nat -A POSTROUTING -p tcp -d ${digitalocean_droplet.c2-https.ipv4_address} --dport 443 -j SNAT --to-source ${digitalocean_droplet.https-redir.ipv4_address}",
+            "iptables -t nat -A PREROUTING -p tcp --dport 80 -j DNAT --to-destination ${digitalocean_droplet.c2-https.ipv4_address}:80",
+            "iptables -t nat -A POSTROUTING -p tcp -d ${digitalocean_droplet.c2-https.ipv4_address} --dport 80 -j SNAT --to-source ${digitalocean_droplet.https-redir.ipv4_address}",
+            "iptables -t nat -A POSTROUTING -j MASQUERADE",
+            "sysctl net.ipv4.ip_forward=1",
+            "iptables -I INPUT -p tcp -m tcp --dport 443 -j ACCEPT",
+            "iptables -A INPUT -p tcp -m tcp --dport 80 -j ACCEPT",
+            "iptables -A INPUT -p tcp -s ${chomp(data.http.local_ip.body)} --dport 22 -j ACCEPT",
+            "iptables -A INPUT -p tcp -s ${digitalocean_droplet.jump.ipv4_address} --dport 22 -j ACCEPT",
+            "iptables -A INPUT -p tcp -s 0.0.0.0/0 --dport 22 -j DROP",
         ]
     
         connection {
@@ -118,6 +138,22 @@ resource "digitalocean_droplet" "lhttps-redir" {
             "apt update",
             "apt upgrade -y",
             "apt auto-remove -y",
+            "echo 1 > /proc/sys/net/ipv4/ip_forward",
+            "iptables -F",
+            "iptables -t nat -F",
+            "iptables -X",
+            "iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT",
+            "iptables -t nat -A PREROUTING -p tcp --dport 443 -j DNAT --to-destination ${digitalocean_droplet.c2-lhttps.ipv4_address}:443",
+            "iptables -t nat -A POSTROUTING -p tcp -d ${digitalocean_droplet.c2-lhttps.ipv4_address} --dport 443 -j SNAT --to-source ${digitalocean_droplet.lhttps-redir.ipv4_address}",
+            "iptables -t nat -A PREROUTING -p tcp --dport 80 -j DNAT --to-destination ${digitalocean_droplet.c2-lhttps.ipv4_address}:80",
+            "iptables -t nat -A POSTROUTING -p tcp -d ${digitalocean_droplet.c2-lhttps.ipv4_address} --dport 80 -j SNAT --to-source ${digitalocean_droplet.lhttps-redir.ipv4_address}",
+            "iptables -t nat -A POSTROUTING -j MASQUERADE",
+            "sysctl net.ipv4.ip_forward=1",
+            "iptables -I INPUT -p tcp -m tcp --dport 443 -j ACCEPT",
+            "iptables -A INPUT -p tcp -m tcp --dport 80 -j ACCEPT",
+            "iptables -A INPUT -p tcp -s ${chomp(data.http.local_ip.body)} --dport 22 -j ACCEPT",
+            "iptables -A INPUT -p tcp -s ${digitalocean_droplet.jump.ipv4_address} --dport 22 -j ACCEPT",
+            "iptables -A INPUT -p tcp -s 0.0.0.0/0 --dport 22 -j DROP",
         ]
     
         connection {
@@ -149,6 +185,22 @@ resource "digitalocean_droplet" "dns-redir" {
             "apt update",
             "apt upgrade -y",
             "apt auto-remove -y",
+            "echo 1 > /proc/sys/net/ipv4/ip_forward",
+            "iptables -F",
+            "iptables -t nat -F",
+            "iptables -X",
+            "iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT",
+            "iptables -t nat -A PREROUTING -p tcp --dport 53 -j DNAT --to-destination ${digitalocean_droplet.c2-dns.ipv4_address}:53",
+            "iptables -t nat -A POSTROUTING -p tcp -d ${digitalocean_droplet.c2-dns.ipv4_address} --dport 53 -j SNAT --to-source ${digitalocean_droplet.dns-redir.ipv4_address}",
+            "iptables -I INPUT -p udp -m udp --dport 53 -j ACCEPT",
+            "iptables -A INPUT -p tcp -m tcp --dport 53 -j ACCEPT",
+            "iptables -t nat -A PREROUTING -p udp --dport 53 -j DNAT --to-destination ${digitalocean_droplet.c2-dns.ipv4_address}:53",
+            "iptables -t nat -A POSTROUTING -p udp -d ${digitalocean_droplet.c2-dns.ipv4_address} --dport 53 -j SNAT --to-source ${digitalocean_droplet.dns-redir.ipv4_address}",
+            "iptables -t nat -A POSTROUTING -j MASQUERADE",
+            "sysctl net.ipv4.ip_forward=1",
+            "iptables -A INPUT -p tcp -s ${chomp(data.http.local_ip.body)} --dport 22 -j ACCEPT",
+            "iptables -A INPUT -p tcp -s ${digitalocean_droplet.jump.ipv4_address} --dport 22 -j ACCEPT",
+            "iptables -A INPUT -p tcp -s 0.0.0.0/0 --dport 22 -j DROP",
         ]
     
         connection {
@@ -199,6 +251,17 @@ resource "digitalocean_droplet" "c2-https" {
             "chmod 700 update && chmod 700 teamserver",
             "echo ${var.cs_key} | ./update",
             "tmux new-session -d -s cobalt_strike 'cd /cobaltstrike; ./teamserver ${digitalocean_droplet.c2-https.ipv4_address} ${random_string.cs_password.result}'",
+            "iptables -F",
+            "iptables -t nat -F",
+            "iptables -X",
+            "iptables -P FORWARD DROP",
+            "iptables -A INPUT -m state --state INVALID -j DROP",
+            "iptables -A INPUT -m --state RELATED,ESTABLISHED -j ACCEPT",
+            "iptables -A INPUT -i lo -j ACCEPT",
+            "iptables -A INPUT -s ${digitalocean_droplet.https-redir.ipv4_address} -j ACCEPT",
+            "iptables -A INPUT -s ${digitalocean_droplet.jump.ipv4_address} -j ACCEPT",
+            "iptables -A INPUT -s ${chomp(data.http.local_ip.body)} -j ACCEPT",
+            "iptables -P INPUT DROP",
         ]
     
         connection {
@@ -248,6 +311,17 @@ resource "digitalocean_droplet" "c2-lhttps" {
             "chmod 700 update && chmod 700 teamserver",
             "echo ${var.cs_key} | ./update",
             "tmux new-session -d -s cobalt_strike 'cd /cobaltstrike; ./teamserver ${digitalocean_droplet.c2-lhttps.ipv4_address} ${random_string.cs_password.result}'",
+            "iptables -F",
+            "iptables -t nat -F",
+            "iptables -X",
+            "iptables -P FORWARD DROP",
+            "iptables -A INPUT -m state --state INVALID -j DROP",
+            "iptables -A INPUT -m --state RELATED,ESTABLISHED -j ACCEPT",
+            "iptables -A INPUT -i lo -j ACCEPT",
+            "iptables -A INPUT -s ${digitalocean_droplet.lhttps-redir.ipv4_address} -j ACCEPT",
+            "iptables -A INPUT -s ${digitalocean_droplet.jump.ipv4_address} -j ACCEPT",
+            "iptables -A INPUT -s ${chomp(data.http.local_ip.body)} -j ACCEPT",
+            "iptables -P INPUT DROP",
         ]
     
         connection {
@@ -297,6 +371,17 @@ resource "digitalocean_droplet" "c2-dns" {
             "chmod 700 update && chmod 700 teamserver",
             "echo ${var.cs_key} | ./update",
             "tmux new-session -d -s cobalt_strike 'cd /cobaltstrike; ./teamserver ${digitalocean_droplet.c2-dns.ipv4_address} ${random_string.cs_password.result}'",
+            "iptables -F",
+            "iptables -t nat -F",
+            "iptables -X",
+            "iptables -P FORWARD DROP",
+            "iptables -A INPUT -m state --state INVALID -j DROP",
+            "iptables -A INPUT -m --state RELATED,ESTABLISHED -j ACCEPT",
+            "iptables -A INPUT -i lo -j ACCEPT",
+            "iptables -A INPUT -s ${digitalocean_droplet.dns-redir.ipv4_address} -j ACCEPT",
+            "iptables -A INPUT -s ${digitalocean_droplet.jump.ipv4_address} -j ACCEPT",
+            "iptables -A INPUT -s ${chomp(data.http.local_ip.body)} -j ACCEPT",
+            "iptables -P INPUT DROP",
         ]
     
         connection {
