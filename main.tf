@@ -39,10 +39,11 @@ resource "digitalocean_droplet" "jump" {
     private_networking  = false
     monitoring          = true
     
-    ssh_keys = [
-        "${data.digitalocean_ssh_key.ssh_key_pub_main.fingerprint}"
-    ]
+    ssh_keys            = ["${data.digitalocean_ssh_key.ssh_key_pub_main.fingerprint}"]
+}
 
+resource "null_resource" "jump-provision" {
+    depends_on          = ["digitalocean_droplet.jump"]
     provisioner "remote-exec" {
         inline = [
             "export DEBIAN_FRONTEND=noninteractive",
@@ -63,6 +64,7 @@ resource "digitalocean_droplet" "jump" {
         ]
     
         connection {
+            host        = "${digitalocean_droplet.jump.ipv4_address}"
             user        = "root"
             type        = "ssh"
             private_key = "${chomp(file(var.sshkey_pvt))}"
@@ -81,10 +83,11 @@ resource "digitalocean_droplet" "https-redir" {
     private_networking  = false
     monitoring          = true
     
-    ssh_keys = [
-        "${data.digitalocean_ssh_key.ssh_key_pub_main.fingerprint}"
-    ]
+    ssh_keys            = ["${data.digitalocean_ssh_key.ssh_key_pub_main.fingerprint}"]
+}
 
+resource "null_resource" "http-redir-provision" {
+    depends_on          = ["digitalocean_droplet.https-redir"]
     provisioner "remote-exec" {
         inline = [
             "export DEBIAN_FRONTEND=noninteractive",
@@ -110,6 +113,7 @@ resource "digitalocean_droplet" "https-redir" {
         ]
     
         connection {
+            host        = "${digitalocean_droplet.https-redir.ipv4_address}"
             user        = "root"
             type        = "ssh"
             private_key = "${chomp(file(var.sshkey_pvt))}"
@@ -128,10 +132,11 @@ resource "digitalocean_droplet" "lhttps-redir" {
     private_networking  = false
     monitoring          = true
     
-    ssh_keys = [
-        "${data.digitalocean_ssh_key.ssh_key_pub_main.fingerprint}"
-    ]
+    ssh_keys            = ["${data.digitalocean_ssh_key.ssh_key_pub_main.fingerprint}"]
+}
 
+resource "null_resource" "lhttps-redir-provision" {
+    depends_on          = ["digitalocean_droplet.lhttps-redir"]
     provisioner "remote-exec" {
         inline = [
             "export DEBIAN_FRONTEND=noninteractive",
@@ -157,6 +162,7 @@ resource "digitalocean_droplet" "lhttps-redir" {
         ]
     
         connection {
+            host        = "${digitalocean_droplet.lhttps-redir.ipv4_address}"
             user        = "root"
             type        = "ssh"
             private_key = "${chomp(file(var.sshkey_pvt))}"
@@ -175,10 +181,11 @@ resource "digitalocean_droplet" "dns-redir" {
     private_networking  = false
     monitoring          = true
     
-    ssh_keys = [
-        "${data.digitalocean_ssh_key.ssh_key_pub_main.fingerprint}"
-    ]
+    ssh_keys            = ["${data.digitalocean_ssh_key.ssh_key_pub_main.fingerprint}"]
+}
 
+resource "null_resource" "dns-redir-provision" {
+    depends_on          = ["digitalocean_droplet.dns-redir"]
     provisioner "remote-exec" {
         inline = [
             "export DEBIAN_FRONTEND=noninteractive",
@@ -204,6 +211,7 @@ resource "digitalocean_droplet" "dns-redir" {
         ]
     
         connection {
+            host        = "${digitalocean_droplet.dns-redir.ipv4_address}"
             user        = "root"
             type        = "ssh"
             private_key = "${chomp(file(var.sshkey_pvt))}"
@@ -222,15 +230,17 @@ resource "digitalocean_droplet" "c2-https" {
     private_networking  = false
     monitoring          = true
     
-    ssh_keys = [
-        "${data.digitalocean_ssh_key.ssh_key_pub_main.fingerprint}"
-    ]
+    ssh_keys            = ["${data.digitalocean_ssh_key.ssh_key_pub_main.fingerprint}"]
+}
 
+resource "null_resource" "c2-https-provision" {
+    depends_on          = ["digitalocean_droplet.c2-https"]
     provisioner "file" {
         source          = "/cobaltstrike"
         destination     = "/."
     
         connection {
+            host        = "${digitalocean_droplet.c2-https.ipv4_address}"
             user        = "root"
             type        = "ssh"
             private_key = "${chomp(file(var.sshkey_pvt))}"
@@ -265,6 +275,7 @@ resource "digitalocean_droplet" "c2-https" {
         ]
     
         connection {
+            host        = "${digitalocean_droplet.c2-https.ipv4_address}"
             user        = "root"
             type        = "ssh"
             private_key = "${chomp(file(var.sshkey_pvt))}"
@@ -282,15 +293,17 @@ resource "digitalocean_droplet" "c2-lhttps" {
     private_networking  = false
     monitoring          = true
     
-    ssh_keys = [
-        "${data.digitalocean_ssh_key.ssh_key_pub_main.fingerprint}"
-    ]
+    ssh_keys            = ["${data.digitalocean_ssh_key.ssh_key_pub_main.fingerprint}"]
+}
     
+resource "null_resource" "c2-lhttps-provision" {
+    depends_on          = ["digitalocean_droplet.c2-lhttps"]
     provisioner "file" {
         source          = "/cobaltstrike"
         destination     = "/."
     
         connection {
+            host        = "${digitalocean_droplet.c2-lhttps.ipv4_address}"
             user        = "root"
             type        = "ssh"
             private_key = "${chomp(file(var.sshkey_pvt))}"
@@ -325,6 +338,7 @@ resource "digitalocean_droplet" "c2-lhttps" {
         ]
     
         connection {
+            host        = "${digitalocean_droplet.c2-lhttps.ipv4_address}"
             user        = "root"
             type        = "ssh"
             private_key = "${chomp(file(var.sshkey_pvt))}"
@@ -342,15 +356,17 @@ resource "digitalocean_droplet" "c2-dns" {
     private_networking  = false
     monitoring          = true
     
-    ssh_keys = [
-        "${data.digitalocean_ssh_key.ssh_key_pub_main.fingerprint}"
-    ]
+    ssh_keys            = ["${data.digitalocean_ssh_key.ssh_key_pub_main.fingerprint}"]
+}
     
+resource "null_resource" "c2-dns-provision" {
+    depends_on          = ["digitalocean_droplet.c2-dns"]
     provisioner "file" {
         source          = "/cobaltstrike"
         destination     = "/."
     
         connection {
+            host        = "${digitalocean_droplet.c2-dns.ipv4_address}"
             user        = "root"
             type        = "ssh"
             private_key = "${chomp(file(var.sshkey_pvt))}"
@@ -385,6 +401,7 @@ resource "digitalocean_droplet" "c2-dns" {
         ]
     
         connection {
+            host        = "${digitalocean_droplet.c2-dns.ipv4_address}"
             user        = "root"
             type        = "ssh"
             private_key = "${chomp(file(var.sshkey_pvt))}"
