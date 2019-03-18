@@ -37,7 +37,7 @@ resource "digitalocean_droplet" "jump" {
     size                = "512mb"
     ipv6                = false
     private_networking  = false
-    monitoring          = true
+    monitoring          = false
     
     ssh_keys            = ["${data.digitalocean_ssh_key.ssh_key_pub_main.fingerprint}"]
 }
@@ -81,7 +81,7 @@ resource "digitalocean_droplet" "https-redir" {
     size                = "512mb"
     ipv6                = false
     private_networking  = false
-    monitoring          = true
+    monitoring          = false
     
     ssh_keys            = ["${data.digitalocean_ssh_key.ssh_key_pub_main.fingerprint}"]
 }
@@ -130,7 +130,7 @@ resource "digitalocean_droplet" "lhttps-redir" {
     size                = "512mb"
     ipv6                = false
     private_networking  = false
-    monitoring          = true
+    monitoring          = false
     
     ssh_keys            = ["${data.digitalocean_ssh_key.ssh_key_pub_main.fingerprint}"]
 }
@@ -179,7 +179,7 @@ resource "digitalocean_droplet" "dns-redir" {
     size                = "512mb"
     ipv6                = false
     private_networking  = false
-    monitoring          = true
+    monitoring          = false
     
     ssh_keys            = ["${data.digitalocean_ssh_key.ssh_key_pub_main.fingerprint}"]
 }
@@ -228,7 +228,7 @@ resource "digitalocean_droplet" "c2-https" {
     size                = "2gb"
     ipv6                = false
     private_networking  = false
-    monitoring          = true
+    monitoring          = false
     
     ssh_keys            = ["${data.digitalocean_ssh_key.ssh_key_pub_main.fingerprint}"]
 }
@@ -266,7 +266,7 @@ resource "null_resource" "c2-https-provision" {
             "iptables -X",
             "iptables -P FORWARD DROP",
             "iptables -A INPUT -m state --state INVALID -j DROP",
-            "iptables -A INPUT -m --state RELATED,ESTABLISHED -j ACCEPT",
+            "iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT",
             "iptables -A INPUT -i lo -j ACCEPT",
             "iptables -A INPUT -s ${digitalocean_droplet.https-redir.ipv4_address} -j ACCEPT",
             "iptables -A INPUT -s ${digitalocean_droplet.jump.ipv4_address} -j ACCEPT",
@@ -291,7 +291,7 @@ resource "digitalocean_droplet" "c2-lhttps" {
     size                = "2gb"
     ipv6                = false
     private_networking  = false
-    monitoring          = true
+    monitoring          = false
     
     ssh_keys            = ["${data.digitalocean_ssh_key.ssh_key_pub_main.fingerprint}"]
 }
@@ -329,7 +329,7 @@ resource "null_resource" "c2-lhttps-provision" {
             "iptables -X",
             "iptables -P FORWARD DROP",
             "iptables -A INPUT -m state --state INVALID -j DROP",
-            "iptables -A INPUT -m --state RELATED,ESTABLISHED -j ACCEPT",
+            "iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT",
             "iptables -A INPUT -i lo -j ACCEPT",
             "iptables -A INPUT -s ${digitalocean_droplet.lhttps-redir.ipv4_address} -j ACCEPT",
             "iptables -A INPUT -s ${digitalocean_droplet.jump.ipv4_address} -j ACCEPT",
@@ -354,7 +354,7 @@ resource "digitalocean_droplet" "c2-dns" {
     size                = "2gb"
     ipv6                = false
     private_networking  = false
-    monitoring          = true
+    monitoring          = false
     
     ssh_keys            = ["${data.digitalocean_ssh_key.ssh_key_pub_main.fingerprint}"]
 }
@@ -392,7 +392,7 @@ resource "null_resource" "c2-dns-provision" {
             "iptables -X",
             "iptables -P FORWARD DROP",
             "iptables -A INPUT -m state --state INVALID -j DROP",
-            "iptables -A INPUT -m --state RELATED,ESTABLISHED -j ACCEPT",
+            "iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT",
             "iptables -A INPUT -i lo -j ACCEPT",
             "iptables -A INPUT -s ${digitalocean_droplet.dns-redir.ipv4_address} -j ACCEPT",
             "iptables -A INPUT -s ${digitalocean_droplet.jump.ipv4_address} -j ACCEPT",
@@ -413,34 +413,34 @@ resource "null_resource" "c2-dns-provision" {
 resource "digitalocean_record" "https-redir" {
     domain              = "${var.domain_front1}"
     type                = "A"
-    name                = "@"
+    name                = "www"
     value               = "${digitalocean_droplet.https-redir.ipv4_address}"
 }
 
 resource "digitalocean_record" "lhttps-redir" {
     domain              = "${var.domain_front2}"
     type                = "A"
-    name                = "@"
+    name                = "www"
     value               = "${digitalocean_droplet.lhttps-redir.ipv4_address}"
 }
 
 resource "digitalocean_record" "jump-https" {
     domain              = "${var.domain_main}"
     type                = "A"
-    name                = "main"
+    name                = "opsX"
     value               = "${digitalocean_droplet.jump.ipv4_address}"
 }
 
 resource "digitalocean_record" "jump-lhttps" {
     domain              = "${var.domain_main}"
     type                = "A"
-    name                = "backup"
+    name                = "backupX"
     value               = "${digitalocean_droplet.jump.ipv4_address}"
 }
 
 resource "digitalocean_record" "jump-dns" {
     domain              = "${var.domain_main}"
     type                = "A"
-    name                = "dns"
+    name                = "dnsX"
     value               = "${digitalocean_droplet.jump.ipv4_address}"
 }
