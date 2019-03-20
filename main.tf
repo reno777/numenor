@@ -272,11 +272,11 @@ resource "null_resource" "c2-https-provision" {
             "openssl pkcs12 -export -in fullchain.pem -inkey privkey.pem -out ${digitalocean_record.https-redir.fqdn}.p12 -name ${digitalocean_record.https-redir.fqdn} -passout pass:${random_string.cs_password.result}",
             "keytool -importkeystore -deststorepass ${random_string.cs_password.result} -destkeypass ${random_string.cs_password.result} -destkeystore ${digitalocean_record.https-redir.fqdn}.store -srckeystore ${digitalocean_record.https-redir.fqdn}.p12 -srcstoretype PKCS12 -srcstorepass ${random_string.cs_password.result} -alias ${digitalocean_record.https-redir.fqdn}",
             "cd ~",
-            "cp /etc/letsencrypt/live/${digitalocean_record.https-redir.fqdn}/${digitalocean_record.https-redir.fqdn}.store /cobaltstrike/httpsProfiles/${digitalocean_record.https-redir/fqdn}.store",
+            "cp /etc/letsencrypt/live/${digitalocean_record.https-redir.fqdn}/${digitalocean_record.https-redir.fqdn}.store /cobaltstrike/httpsProfiles/${digitalocean_record.https-redir.fqdn}.store",
             "cd /cobaltstrike",
             "echo    set keystore '${digitalocean_record.https-redir.fqdn}.store'; >> /httpsProfiles/amazon.profile",
             "echo    set password '${random_string.cs_password.result}'; >> /httpsProfiles/amazon.profile",
-            "echo '}' >> httpsProfiles/amazon.profile"
+            "echo '}' >> httpsProfiles/amazon.profile",
             "tmux new-session -d -s cobalt_strike 'cd /cobaltstrike; ./teamserver ${digitalocean_droplet.c2-https.ipv4_address} ${random_string.cs_password.result} httpsProfiles/amazon.profile'",
             "iptables -F",
             "iptables -t nat -F",
