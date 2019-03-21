@@ -38,7 +38,6 @@ resource "digitalocean_droplet" "jump" {
     ipv6                = false
     private_networking  = false
     monitoring          = false
-    
     ssh_keys            = ["${data.digitalocean_ssh_key.ssh_key_pub_main.fingerprint}"]
 }
 
@@ -82,7 +81,6 @@ resource "digitalocean_droplet" "https-redir" {
     ipv6                = false
     private_networking  = false
     monitoring          = false
-    
     ssh_keys            = ["${data.digitalocean_ssh_key.ssh_key_pub_main.fingerprint}"]
 }
 
@@ -131,7 +129,6 @@ resource "digitalocean_droplet" "lhttps-redir" {
     ipv6                = false
     private_networking  = false
     monitoring          = false
-    
     ssh_keys            = ["${data.digitalocean_ssh_key.ssh_key_pub_main.fingerprint}"]
 }
 
@@ -180,7 +177,6 @@ resource "digitalocean_droplet" "dns-redir" {
     ipv6                = false
     private_networking  = false
     monitoring          = false
-    
     ssh_keys            = ["${data.digitalocean_ssh_key.ssh_key_pub_main.fingerprint}"]
 }
 
@@ -229,7 +225,6 @@ resource "digitalocean_droplet" "c2-https" {
     ipv6                = false
     private_networking  = false
     monitoring          = false
-    
     ssh_keys            = ["${data.digitalocean_ssh_key.ssh_key_pub_main.fingerprint}"]
 }
 
@@ -309,7 +304,6 @@ resource "digitalocean_droplet" "c2-lhttps" {
     ipv6                = false
     private_networking  = false
     monitoring          = false
-    
     ssh_keys            = ["${data.digitalocean_ssh_key.ssh_key_pub_main.fingerprint}"]
 }
     
@@ -389,7 +383,6 @@ resource "digitalocean_droplet" "c2-dns" {
     ipv6                = false
     private_networking  = false
     monitoring          = false
-    
     ssh_keys            = ["${data.digitalocean_ssh_key.ssh_key_pub_main.fingerprint}"]
 }
     
