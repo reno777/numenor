@@ -1,4 +1,4 @@
-###NOTE: In order for this to work as the .tfvars file in terraform you must place it in the same directory as the deploy.tf script and rename it to "terraform.tfvars".
+###NOTE: In order for this to work as the .tfvars file in terraform you must place it in the same directory as the main.tf script and rename it to "terraform.tfvars".
 
 #-------------------------------------------------------------#
 #                       Digital Ocean                         #
@@ -11,8 +11,8 @@ droplet_region     = "nyc1" #Available regions: nyc,sfo,ams,sgp,lon,fra,tor,blr 
 #                            SSH                              #
 #-------------------------------------------------------------#
 
-sshkey_pvt         = "<This is the location of your private key that will be used to configure the Machines! I.E. ~/.ssh/id_rsa>"
-sshkey_name        = "<This is the EXACT name of your ssh key in DO!>"
+sshkey_pvt         = "<This is the location of your private key on the local machine that will be used to configure the Machines! I.E. ~/.ssh/id_rsa>"
+sshkey_name        = "<This is the EXACT name of your ssh key in Digital Ocean!>"
 
 #-------------------------------------------------------------#
 #                          Domain                             #
@@ -20,7 +20,7 @@ sshkey_name        = "<This is the EXACT name of your ssh key in DO!>"
 
 domain_front1      = "<HTTPS domain name goes here!>"
 domain_front2      = "<LHTTPS domain name goes here!>"
-domain_main        = "<The main domain name goes here!>"
+domain_main        = "<The main domain name used for connecting to the C2s goes here!>"
 
 #-------------------------------------------------------------#
 #                       Cobalt Strike                         #

@@ -1,8 +1,9 @@
 #Main terraform script for the Red Team Infrastructure
 #By: 0xreno
 #License: GNU GPL v3
+#NOTE: Make sure to run `export DIGITALOCEAN_TOKEN="ApiKeyGoesHere"` and add this to your .bashrc as well. This will be depreceated after Vault is implimented.
 
-#Declare variables
+#Declares the variables from terraform.tfvars used in the script.
 variable "droplet_region"    {}
 variable "sshkey_pvt"        {}
 variable "domain_front1"     {}
@@ -11,36 +12,36 @@ variable "domain_main"       {}
 variable "cs_key"            {}
 variable "sshkey_name"       {}
 
-
-provider "digitalocean"      {} #Make sure to run `export DIGITALOCEAN_TOKEN="ApiKeyGoesHere"` and add this to your .bashrc as well. This will be depreceated after Vault is implimented.
-
-#This section can be used as a template for more ssh keys to be added on spin up. 
-#As of now the ssh keys needed to be added manually to DO and the exact name should be noted such as the one below.
-
+provider "digitalocean"      {} 
+ 
+#This sets the sshkey_name value to what is in the terraform.tfvars file. This shouhld be the exact name of the ssh key in Digital Ocean.
 data "digitalocean_ssh_key" "ssh_key_pub_main" {
     name                = "${var.sshkey_name}" 
 }
 
+#This gets the current public IP address of the machine running terraform, which will be used in the iptables rules for each machine.
 data "http" "local_ip" {
     url                 = "http://ipv4.icanhazip.com"
 }
 
+#This generates a random character password to be used for Cobalt Strike. This password is also used in generating the SSL certs.
 resource "random_string" "cs_password" {
     length              = 24
     special             = false
 }
-
+#This resource is used to spin up the jumphost machine.
 resource "digitalocean_droplet" "jump" {
-    image               = "ubuntu-18-04-x64"
-    name                = "jumphost"
-    region              = "${var.droplet_region}"
-    size                = "512mb"
-    ipv6                = false
-    private_networking  = false
-    monitoring          = false
-    ssh_keys            = ["${data.digitalocean_ssh_key.ssh_key_pub_main.fingerprint}"]
+    image               = "ubuntu-18-04-x64" #The OS the machine will run.
+    name                = "jumphost" #The name of the machine in digital ocean.
+    region              = "${var.droplet_region}" #Varilable for the region that the machine will be spun up in.
+    size                = "512mb" #The RAM size being used to spin up the machine. This is what affects cost in Digital Ocean.
+    ipv6                = false #Boolean to set wether or not the machine has ipv6 networking.
+    private_networking  = false #Boolean to set wether or not the machine is on a private network.
+    monitoring          = false #Boolean to set up Digital Ocean Monitoring on the machine. NOTE: This needs to be false in order for the machines to update correctly. If set to true apt becomes locked.
+    ssh_keys            = ["${data.digitalocean_ssh_key.ssh_key_pub_main.fingerprint}"] #This is the ssh key that terraform will use to provision the machines.
 }
 
+#This null resource provisions or is the setup for the jumphost machine. 
 resource "null_resource" "jump-provision" {
     depends_on          = ["digitalocean_droplet.jump"]
     provisioner "remote-exec" {
