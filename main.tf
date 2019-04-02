@@ -222,7 +222,6 @@ resource "null_resource" "dns-redir-provision" {
             timeout     = "2m"
         }
     }
-    
 }
 
 resource "digitalocean_droplet" "c2-https" {
