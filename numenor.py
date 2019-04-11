@@ -19,15 +19,15 @@ def prog_parser() :
     parser.add_argument("--ops3", help="Uses OPS3 as target infrasture.", action="store_true")
     args = parser.parse_args()
     if args.apply :
-        if args.op1 :
+        if args.ops1 :
             print "[!] Spinning up OPS1"
             os.chdir("/etc/terraform/ops1")
             print os.getcwd()
-        elif args.op2 :
+        elif args.ops2 :
             print "[!] Spinning up OPS2!"
             os.chdir("/etc/terraform/ops2")
             print os.getcwd()
-        elif args.op3 :
+        elif args.ops3 :
             print "[!] Spinning up OPS3!"
             os.chdir("/etc/terraform/ops3")
             print os.getcwd()
@@ -35,15 +35,15 @@ def prog_parser() :
             print "[!!!] Please specify the infrastructure to apply!"
         print "[DEBUG] Infrastructure {} applied!".format(args.op_name)
     if args.destroy :
-        if args.op1 : 
+        if args.ops1 : 
             print "[!] Destroying OPS1!"
             os.chdir("/etc/terraform/ops1")
             print os.getcwd()
-        elif args.op2 :
+        elif args.ops2 :
             print "[!] Destroying OPS2!"
             os.chdir("/etc/terraform/ops2")
             print os.getcwd()
-        elif args.op3 :
+        elif args.ops3 :
             print "[!] Destroying OPS3!"
             os.chdir("/etc/terraform/ops3")
             print os.getcwd()
