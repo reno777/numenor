@@ -1,5 +1,5 @@
 #Main terraform script for the Red Team Infrastructure
-#By: 0xreno
+#Author: 0xreno
 #License: GNU GPL v3
 #NOTE: Make sure to run `export DIGITALOCEAN_TOKEN="ApiKeyGoesHere"` and add this to your .bashrc as well. This will be depreceated after Vault is implimented.
 
@@ -11,6 +11,7 @@ variable "domain_front2"     {}
 variable "domain_main"       {}
 variable "cs_key"            {}
 variable "sshkey_name"       {}
+variable "op_name"           {}
 
 provider "digitalocean"      {} 
  
@@ -32,7 +33,7 @@ resource "random_string" "cs_password" {
 #This resource is used to spin up the jumphost machine.
 resource "digitalocean_droplet" "jump" {
     image               = "ubuntu-18-04-x64" #The OS the machine will run.
-    name                = "jumphost" #The name of the machine in digital ocean.
+    name                = "${var.op_name}-jumphost" #The name of the machine in digital ocean.
     region              = "${var.droplet_region}" #Varilable for the region that the machine will be spun up in.
     size                = "512mb" #The RAM size being used to spin up the machine. This is what affects cost in Digital Ocean.
     ipv6                = false #Boolean to set wether or not the machine has ipv6 networking.
@@ -77,7 +78,7 @@ resource "null_resource" "jump-provision" {
 
 resource "digitalocean_droplet" "https-redir" {
     image               = "ubuntu-18-04-x64" #The OS the machine will run.
-    name                = "mirror-https" #The name of the machine in digital ocean.
+    name                = "${var.op_name}-mirror-https" #The name of the machine in digital ocean.
     region              = "${var.droplet_region}" #Varilable for the region that the machine will be spun up in.
     size                = "512mb" #The RAM size being used to spin up the machine. This is what affects cost in Digital Ocean.
     ipv6                = false #Boolean to set wether or not the machine has ipv6 networking.
@@ -127,7 +128,7 @@ resource "null_resource" "http-redir-provision" {
 
 resource "digitalocean_droplet" "lhttps-redir" {
     image               = "ubuntu-18-04-x64" #The OS the machine will run.
-    name                = "mirror-lhttps" #The name of the machine in digital ocean.
+    name                = "${var.op_name}-mirror-lhttps" #The name of the machine in digital ocean.
     region              = "${var.droplet_region}" #Varilable for the region that the machine will be spun up in.
     size                = "512mb" #The RAM size being used to spin up the machine. This is what affects cost in Digital Ocean.
     ipv6                = false #Boolean to set wether or not the machine has ipv6 networking.
@@ -177,7 +178,7 @@ resource "null_resource" "lhttps-redir-provision" {
 
 resource "digitalocean_droplet" "dns-redir" {
     image               = "ubuntu-18-04-x64" #The OS the machine will run.
-    name                = "mirror-dns" #The name of the machine in digital ocean.
+    name                = "${var.op_name}-mirror-dns" #The name of the machine in digital ocean.
     region              = "${var.droplet_region}" #Varilable for the region that the machine will be spun up in.
     size                = "512mb" #The RAM size being used to spin up the machine. This is what affects cost in Digital Ocean.
     ipv6                = false #Boolean to set wether or not the machine has ipv6 networking.
@@ -226,7 +227,7 @@ resource "null_resource" "dns-redir-provision" {
 
 resource "digitalocean_droplet" "c2-https" {
     image               = "ubuntu-18-04-x64" #The OS the machine will run.
-    name                = "c2-https" #The name of the machine in digital ocean.
+    name                = "${var.op_name}-c2-https" #The name of the machine in digital ocean.
     region              = "${var.droplet_region}" #Varilable for the region that the machine will be spun up in.
     size                = "2gb" #The RAM size being used to spin up the machine. This is what affects cost in Digital Ocean.
     ipv6                = false #Boolean to set wether or not the machine has ipv6 networking.
@@ -308,7 +309,7 @@ resource "null_resource" "c2-https-provision" {
 
 resource "digitalocean_droplet" "c2-lhttps" {
     image               = "ubuntu-18-04-x64" #The OS the machine will run.
-    name                = "c2-lhttps" #The name of the machine in digital ocean.
+    name                = "${var.op_name}-c2-lhttps" #The name of the machine in digital ocean.
     region              = "${var.droplet_region}" #Varilable for the region that the machine will be spun up in.
     size                = "2gb" #The RAM size being used to spin up the machine. This is what affects cost in Digital Ocean.
     ipv6                = false #Boolean to set wether or not the machine has ipv6 networking.
@@ -389,7 +390,7 @@ resource "null_resource" "c2-lhttps-provision" {
 
 resource "digitalocean_droplet" "c2-dns" {
     image               = "ubuntu-18-04-x64" #The OS the machine will run.
-    name                = "c2-dns" #The name of the machine in digital ocean.
+    name                = "${var.op_name}-c2-dns" #The name of the machine in digital ocean.
     region              = "${var.droplet_region}" #Varilable for the region that the machine will be spun up in.
     size                = "2gb" #The RAM size being used to spin up the machine. This is what affects cost in Digital Ocean.
     ipv6                = false #Boolean to set wether or not the machine has ipv6 networking.
