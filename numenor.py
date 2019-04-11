@@ -26,19 +26,19 @@ def prog_parser() :
             os.chdir("/etc/terraform/ops1")
             print os.getcwd() #debug
             subprocess.call(["terraform", "init"])
-            subprocess.call(args, shell=True)
+            subprocess.call(terra, shell=True)
         elif args.ops2 :
             print "[!] Spinning up OPS2!"
             os.chdir("/etc/terraform/ops2")
             print os.getcwd()
             subprocess.call(["terraform", "init"])
-            subprocess.call(args, shell=True)
+            subprocess.call(terra, shell=True)
         elif args.ops3 :
             print "[!] Spinning up OPS3!"
             os.chdir("/etc/terraform/ops3")
             print os.getcwd()
             subprocess.call(["terraform", "init"])
-            subprocess.call(args, shell=True)
+            subprocess.call(terra, shell=True)
         else :
             print "[!!!] Please specify the infrastructure to apply!"
         print "[DEBUG] Infrastructure '{}' applied!".format(args.op_name)
@@ -48,19 +48,19 @@ def prog_parser() :
             os.chdir("/etc/terraform/ops1")
             print os.getcwd()
             subprocess.call(["terraform", "init"])
-            subprocess.call(args, shell=True)
+            subprocess.call(terra, shell=True)
         elif args.ops2 :
             print "[!] Destroying OPS2!"
             os.chdir("/etc/terraform/ops2")
             print os.getcwd()
             subprocess.call(["terraform", "init"])
-            subprocess.call(args, shell=True)
+            subprocess.call(terra, shell=True)
         elif args.ops3 :
             print "[!] Destroying OPS3!"
             os.chdir("/etc/terraform/ops3")
             print os.getcwd()
             subprocess.call(["terraform", "init"])
-            subprocess.call(args, shell=True)
+            subprocess.call(terra, shell=True)
         else :
             print "[!!!] Please specify the infrastructure to destroy!"
         print "[DEBUG] Infrastructure '{}' destroyed!".format(args.op_name)
