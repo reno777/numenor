@@ -259,9 +259,8 @@ resource "null_resource" "c2-https-provision" {
             "apt update",
             "apt upgrade -y",
             "apt auto-remove -y",
-            "add-apt-repository ppa:webupd8team/java -y", #The next 3 lines installs java 8 on the machine.
-            "echo 'oracle-java8-installer shared/accepted-oracle-license-v1-1 select true' | sudo debconf-set-selections",
-            "apt install oracle-java8-installer -y",
+            "apt install openjdk-11-jdk -y", #The next 2 lines installs java 8 on the machine.
+            "update-java-alternatives -s java-1.11/0-openjdk-amd64",
             "cd /opt", #The next 21 lines setups Cobalt Strike and the SSL certificates needed for c2-https and c2-lhttps.
             "git clone https://github.com/certbot/certbot.git",
             "cd /opt/certbot",
@@ -341,9 +340,8 @@ resource "null_resource" "c2-lhttps-provision" {
             "apt update",
             "apt upgrade -y",
             "apt auto-remove -y",
-            "add-apt-repository ppa:webupd8team/java -y", #The next 3 lines installs java 8 on the machine.
-            "echo 'oracle-java8-installer shared/accepted-oracle-license-v1-1 select true' | sudo debconf-set-selections",
-            "apt install oracle-java8-installer -y",
+            "apt install openjdk-11-jdk -y", #The next 2 lines installs java 8 on the machine.
+            "update-java-alternatives -s java-1.11/0-openjdk-amd64"
             "cd /opt", #The next 21 lines setups Cobalt Strike and the SSL certificates needed for c2-https and c2-lhttps.
             "git clone https://github.com/certbot/certbot.git",
             "cd /opt/certbot",
@@ -422,9 +420,8 @@ resource "null_resource" "c2-dns-provision" {
             "apt update",
             "apt upgrade -y",
             "apt auto-remove -y",
-            "add-apt-repository ppa:webupd8team/java -y", #The next 3 lines installs java 8 on the machine.
-            "echo 'oracle-java8-installer shared/accepted-oracle-license-v1-1 select true' | sudo debconf-set-selections",
-            "apt install oracle-java8-installer -y",
+            "apt install openjdk-11-jdk -y", #The next 2 lines installs java 8 on the machine.
+            "update-java-alternatives -s java-1.11/0-openjdk-amd64",
             "cd /cobaltstrike", #The next 4 lines setups Cobalt Strike.
             "chmod 700 update && chmod 700 teamserver",
             "echo ${var.cs_key} | ./update",
