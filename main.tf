@@ -341,7 +341,7 @@ resource "null_resource" "c2-lhttps-provision" {
             "apt upgrade -y",
             "apt auto-remove -y",
             "apt install openjdk-11-jdk -y", #The next 2 lines installs java 8 on the machine.
-            "update-java-alternatives -s java-1.11/0-openjdk-amd64"
+            "update-java-alternatives -s java-1.11/0-openjdk-amd64",
             "cd /opt", #The next 21 lines setups Cobalt Strike and the SSL certificates needed for c2-https and c2-lhttps.
             "git clone https://github.com/certbot/certbot.git",
             "cd /opt/certbot",
