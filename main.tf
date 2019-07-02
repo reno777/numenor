@@ -8,6 +8,7 @@ variable "droplet_region"    {}
 variable "sshkey_pvt"        {}
 variable "domain_front1"     {}
 variable "domain_front2"     {}
+variable "domain_dns"        {}
 variable "domain_main"       {}
 variable "cs_key"            {}
 variable "sshkey_name"       {}
@@ -426,6 +427,8 @@ resource "null_resource" "c2-dns-provision" {
             "chmod 700 update && chmod 700 teamserver",
             "echo ${var.cs_key} | ./update",
             "tmux new-session -d -s cobalt_strike 'cd /cobaltstrike; ./teamserver ${digitalocean_droplet.c2-dns.ipv4_address} ${random_string.cs_password.result}'",
+            "systemctl disable systemd-resolved", #This line and the next disables port 53 from being used by default on 18.04
+            "systemctl stop systemd-resolved",
             "iptables -F", #The rest of the lines pushes iptables rules to the machine.
             "iptables -t nat -F",
             "iptables -X",
@@ -463,6 +466,20 @@ resource "digitalocean_record" "lhttps-redir" {
     type                = "A"
     name                = "www"
     value               = "${digitalocean_droplet.lhttps-redir.ipv4_address}"
+}
+
+resource "digitalocean_record" "dns-redir" {
+    domain              = "${var.domain_dns}"
+    type                = "A" 
+    name                = "ns1"
+    value               = "${digitalocean_droplet.dns-redir.ipv4_address}"
+}
+
+resource "digitalocean_record" "dns-ns" {
+    domain              = "${var.domain_dns}"
+    type                = "NS" 
+    name                = "dns"
+    value               = "${digitalocean_droplet.dns-redir.fqdn}"
 }
 
 resource "digitalocean_record" "jump-https" {

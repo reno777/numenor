@@ -20,6 +20,7 @@ sshkey_name        = "<This is the EXACT name of your ssh key in Digital Ocean!>
 
 domain_front1      = "<HTTPS domain name goes here!>"
 domain_front2      = "<LHTTPS domain name goes here!>"
+domain_dns         = "<DNS domain name goes here!>"
 domain_main        = "<The main domain name used for connecting to the C2s goes here!>"
 
 #-------------------------------------------------------------#
