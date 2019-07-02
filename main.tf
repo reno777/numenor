@@ -479,7 +479,7 @@ resource "digitalocean_record" "dns-ns" {
     domain              = "${var.domain_dns}"
     type                = "NS" 
     name                = "dns"
-    value               = "${digitalocean_droplet.dns-redir.fqdn}"
+    value               = "${digitalocean_record.dns-redir.fqdn}"
 }
 
 resource "digitalocean_record" "jump-https" {
