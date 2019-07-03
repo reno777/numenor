@@ -60,6 +60,16 @@ output "MIRROR-DNS IP" {
     value = "${digitalocean_droplet.dns-redir.ipv4_address}"
 }
 
+#This outputs the FQDN for the dns redirector instance.
+output "MIRROR-DNS FQDN" {
+    value = "${digitalocean_record.dns-redir.fqdn}"
+}
+
+#This outputs the FQDN for the name server portion of the dns redirector instance.
+output "MIRROR-DNS NS" {
+    value = "${digitalocean_record.dns-ns.fqdn}"
+}
+
 #This outputs the password used to start and login to the Cobalt Strike instances located on c2-https, c2-lhttp, and c2-dns.
 output "CS PASSWORD" {
     value = "${random_string.cs_password.result}"
