@@ -23,7 +23,6 @@ internalip = args.internalip
 username = args.username
 
 slack = slackweb.Slack(url=slackUrl)
-message = "New Beacon: {}@{} ({}) on
-{}".format(username,computername,internalip,hostname)
+message = "New Beacon: {}@{} ({}) on {}".format(username,computername,internalip,hostname)
 #Be sure to change the channel and username variables 
 slack.notify(text=message, channel="#general", username="CSBOT")
