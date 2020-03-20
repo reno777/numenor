@@ -285,7 +285,8 @@ resource "null_resource" "c2-https-provision" {
             "echo '    set password \"${random_string.cs_password.result}\";' >> httpsProfiles/amazon.profile",
             "echo '}' >> httpsProfiles/amazon.profile",
             "tmux new-session -d -s cobalt_strike 'cd /cobaltstrike; ./teamserver ${digitalocean_droplet.c2-https.ipv4_address} ${random_string.cs_password.result} httpsProfiles/amazon.profile'",
-            "tmux new-session -d -s bot 'cd /cobaltstrike; ./agscript 127.0.0.1 50050 bot ${random_string.cs_password.result} beaconnotification.cna'",
+            "sleep 10",
+            "tmux new-session -d -s bot 'cd /cobaltstrike; ./agscript 127.0.0.1 50050 R2-C2 ${random_string.cs_password.result} beaconnotification.cna'",
             "iptables -F", #The rest of the lines pushes iptables rules to the machine.
             "iptables -t nat -F",
             "iptables -X",
@@ -369,7 +370,8 @@ resource "null_resource" "c2-lhttps-provision" {
             "echo '    set password \"${random_string.cs_password.result}\";' >> httpsProfiles/amazon.profile",
             "echo '}' >> httpsProfiles/amazon.profile",
             "tmux new-session -d -s cobalt_strike 'cd /cobaltstrike; ./teamserver ${digitalocean_droplet.c2-lhttps.ipv4_address} ${random_string.cs_password.result} httpsProfiles/amazon.profile'",
-            "tmux new-session -d -s bot 'cd /cobaltstrike; ./agscript 127.0.0.1 50050 bot ${random_string.cs_password.result} beaconnotification.cna'",
+            "sleep 10",
+            "tmux new-session -d -s bot 'cd /cobaltstrike; ./agscript 127.0.0.1 50050 R2-C2 ${random_string.cs_password.result} beaconnotification.cna'",
             "iptables -F", #The rest of the lines pushes iptables rules to the machine.
             "iptables -t nat -F",
             "iptables -X",
@@ -435,7 +437,8 @@ resource "null_resource" "c2-dns-provision" {
             "chmod -R 700 update teamserver slackhook.py agscript",
             "echo ${var.cs_key} | ./update",
             "tmux new-session -d -s cobalt_strike 'cd /cobaltstrike; ./teamserver ${digitalocean_droplet.c2-dns.ipv4_address} ${random_string.cs_password.result}'",
-            "tmux new-session -d -s bot 'cd /cobaltstrike; ./agscript 127.0.0.1 50050 bot ${random_string.cs_password.result} beaconnotification.cna'",
+            "sleep 10",
+            "tmux new-session -d -s bot 'cd /cobaltstrike; ./agscript 127.0.0.1 50050 R2-C2 ${random_string.cs_password.result} beaconnotification.cna'",
             "systemctl disable systemd-resolved", #This line and the next disables port 53 from being used by default on 18.04
             "systemctl stop systemd-resolved",
             "iptables -F", #The rest of the lines pushes iptables rules to the machine.
