@@ -269,7 +269,7 @@ resource "null_resource" "c2-https-provision" {
             "cd /opt/certbot",
             "./letsencrypt-auto certonly --standalone -d ${digitalocean_record.https-redir.fqdn} -n --register-unsafely-without-email --agree-tos",
             "cd /cobaltstrike",
-            "chmod 700 update && chmod 700 teamserver && chmod 700 slackhook.py",
+            "chmod -R 700 update teamserver slackhook.py agscript",
             "echo ${var.cs_key} | ./update",
             "mkdir httpsProfiles/ && cd httpsProfiles/",
             "wget https://raw.githubusercontent.com/rsmudge/Malleable-C2-Profiles/master/normal/amazon.profile",
@@ -353,7 +353,7 @@ resource "null_resource" "c2-lhttps-provision" {
             "cd /opt/certbot",
             "./letsencrypt-auto certonly --standalone -d ${digitalocean_record.lhttps-redir.fqdn} -n --register-unsafely-without-email --agree-tos",
             "cd /cobaltstrike",
-            "chmod 700 update && chmod 700 teamserver && chmod 700 slackhook.py",
+            "chmod -R 700 update teamserver slackhook.py agscript",
             "echo ${var.cs_key} | ./update",
             "mkdir httpsProfiles/ && cd httpsProfiles/",
             "wget https://raw.githubusercontent.com/rsmudge/Malleable-C2-Profiles/master/normal/amazon.profile",
@@ -432,7 +432,7 @@ resource "null_resource" "c2-dns-provision" {
             "apt install openjdk-11-jdk -y", #The next 2 lines installs java 8 on the machine.
             "update-java-alternatives -s java-1.11.0-openjdk-amd64",
             "cd /cobaltstrike", #The next 4 lines setups Cobalt Strike.
-            "chmod 700 update && chmod 700 teamserver && chmod 700 slackhook.py",
+            "chmod -R 700 update teamserver slackhook.py agscript",
             "echo ${var.cs_key} | ./update",
             "tmux new-session -d -s cobalt_strike 'cd /cobaltstrike; ./teamserver ${digitalocean_droplet.c2-dns.ipv4_address} ${random_string.cs_password.result}'",
             "tmux new-session -d -s bot 'cd /cobaltstrike; ./agscript 127.0.0.1 50050 bot ${random_string.cs_password.result} beaconnotification.cna'",
