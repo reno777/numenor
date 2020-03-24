@@ -13,6 +13,7 @@ variable "domain_main"       {}
 variable "cs_key"            {}
 variable "sshkey_name"       {}
 variable "op_name"           {}
+variable "ops_num"           {}
 
 provider "digitalocean"      {} 
  
@@ -269,7 +270,7 @@ resource "null_resource" "c2-https-provision" {
             "cd /opt/certbot",
             "./letsencrypt-auto certonly --standalone -d ${digitalocean_record.https-redir.fqdn} -n --register-unsafely-without-email --agree-tos",
             "cd /cobaltstrike",
-            "chmod -R 700 update teamserver slackhook.py agscript",
+            "chmod -R 700 update teamserver slackhook${var.ops_num}.py agscript",
             "echo ${var.cs_key} | ./update",
             "mkdir httpsProfiles/ && cd httpsProfiles/",
             "wget https://raw.githubusercontent.com/rsmudge/Malleable-C2-Profiles/master/normal/amazon.profile",
@@ -286,7 +287,7 @@ resource "null_resource" "c2-https-provision" {
             "echo '}' >> httpsProfiles/amazon.profile",
             "tmux new-session -d -s cobalt_strike 'cd /cobaltstrike; ./teamserver ${digitalocean_droplet.c2-https.ipv4_address} ${random_string.cs_password.result} httpsProfiles/amazon.profile'",
             "sleep 10",
-            "tmux new-session -d -s bot 'cd /cobaltstrike; ./agscript 127.0.0.1 50050 R2-C2 ${random_string.cs_password.result} beaconnotification.cna'",
+            "tmux new-session -d -s bot 'cd /cobaltstrike; ./agscript 127.0.0.1 50050 R2-C2 ${random_string.cs_password.result} beaconnotification${var.ops_num}.cna'",
             "iptables -F", #The rest of the lines pushes iptables rules to the machine.
             "iptables -t nat -F",
             "iptables -X",
@@ -354,7 +355,7 @@ resource "null_resource" "c2-lhttps-provision" {
             "cd /opt/certbot",
             "./letsencrypt-auto certonly --standalone -d ${digitalocean_record.lhttps-redir.fqdn} -n --register-unsafely-without-email --agree-tos",
             "cd /cobaltstrike",
-            "chmod -R 700 update teamserver slackhook.py agscript",
+            "chmod -R 700 update teamserver slackhook${var.ops_num}.py agscript",
             "echo ${var.cs_key} | ./update",
             "mkdir httpsProfiles/ && cd httpsProfiles/",
             "wget https://raw.githubusercontent.com/rsmudge/Malleable-C2-Profiles/master/normal/amazon.profile",
@@ -371,7 +372,7 @@ resource "null_resource" "c2-lhttps-provision" {
             "echo '}' >> httpsProfiles/amazon.profile",
             "tmux new-session -d -s cobalt_strike 'cd /cobaltstrike; ./teamserver ${digitalocean_droplet.c2-lhttps.ipv4_address} ${random_string.cs_password.result} httpsProfiles/amazon.profile'",
             "sleep 10",
-            "tmux new-session -d -s bot 'cd /cobaltstrike; ./agscript 127.0.0.1 50050 R2-C2 ${random_string.cs_password.result} beaconnotification.cna'",
+            "tmux new-session -d -s bot 'cd /cobaltstrike; ./agscript 127.0.0.1 50050 R2-C2 ${random_string.cs_password.result} beaconnotification${var.ops_num}.cna'",
             "iptables -F", #The rest of the lines pushes iptables rules to the machine.
             "iptables -t nat -F",
             "iptables -X",
@@ -434,11 +435,11 @@ resource "null_resource" "c2-dns-provision" {
             "apt install openjdk-11-jdk -y", #The next 2 lines installs java 8 on the machine.
             "update-java-alternatives -s java-1.11.0-openjdk-amd64",
             "cd /cobaltstrike", #The next 4 lines setups Cobalt Strike.
-            "chmod -R 700 update teamserver slackhook.py agscript",
+            "chmod -R 700 update teamserver slackhook${var.ops_num}.py agscript",
             "echo ${var.cs_key} | ./update",
             "tmux new-session -d -s cobalt_strike 'cd /cobaltstrike; ./teamserver ${digitalocean_droplet.c2-dns.ipv4_address} ${random_string.cs_password.result}'",
             "sleep 10",
-            "tmux new-session -d -s bot 'cd /cobaltstrike; ./agscript 127.0.0.1 50050 R2-C2 ${random_string.cs_password.result} beaconnotification.cna'",
+            "tmux new-session -d -s bot 'cd /cobaltstrike; ./agscript 127.0.0.1 50050 R2-C2 ${random_string.cs_password.result} beaconnotification${var.ops_num}.cna'",
             "systemctl disable systemd-resolved", #This line and the next disables port 53 from being used by default on 18.04
             "systemctl stop systemd-resolved",
             "iptables -F", #The rest of the lines pushes iptables rules to the machine.
@@ -497,20 +498,20 @@ resource "digitalocean_record" "dns-ns" {
 resource "digitalocean_record" "jump-https" {
     domain              = "${var.domain_main}"
     type                = "A"
-    name                = "opsX"
+    name                = "ops${var.ops_num}"
     value               = "${digitalocean_droplet.jump.ipv4_address}"
 }
 
 resource "digitalocean_record" "jump-lhttps" {
     domain              = "${var.domain_main}"
     type                = "A"
-    name                = "backupX"
+    name                = "backup${var.ops_num}"
     value               = "${digitalocean_droplet.jump.ipv4_address}"
 }
 
 resource "digitalocean_record" "jump-dns" {
     domain              = "${var.domain_main}"
     type                = "A"
-    name                = "dnsX"
+    name                = "dns${var.ops_num}"
     value               = "${digitalocean_droplet.jump.ipv4_address}"
 }
