@@ -10,9 +10,10 @@ import argparse
 import os
 import subprocess
 
+#This is the main funciton. This is what spins up and tears down the infrastructure.
 def prog_parser() :
     parser = argparse.ArgumentParser()
-    parser.add_argument("op_name", help="Gives a name to the machines that are spun up in Digital Ocean.")
+    #parser.add_argument("op_name", help="Gives a name to the machines that are spun up in Digital Ocean.")
     parser.add_argument("-a", "--apply", help="Applies the infrastructure and spins up the machines.", action="store_true")
     parser.add_argument("-d", "--destroy", help="Destroys any current infrastructure that is spun up.", action="store_true")
     parser.add_argument("-o", "--output", help="Shows the infrastructure information.", action="store_true")
@@ -20,8 +21,8 @@ def prog_parser() :
     parser.add_argument("--ops2", help="Uses OPS2 as target infrasture.", action="store_true")
     parser.add_argument("--ops3", help="Uses OPS3 as target infrasture.", action="store_true")
     args = parser.parse_args()
-    terra = "terraform apply --auto-approve -var op_name={}".format(args.op_name)
-    terrd = "terraform destroy --auto-approve -var op_name={}".format(args.op_name)
+    terra = "terraform apply --auto-approve" #-var op_name={}".format(args.op_name)
+    terrd = "terraform destroy --auto-approve" #-var op_name={}".format(args.op_name)
     terro = "terraform output"
     if args.apply :
         if args.ops1 :

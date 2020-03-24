@@ -34,3 +34,4 @@ cs_key             = "<Cobalt Strike Key Goes Here!>"
 #-------------------------------------------------------------#
 
 ops_num            = "<OP number goes here!>"
+op_name            = "<OP name goes here!>"
