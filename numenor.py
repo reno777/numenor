@@ -26,16 +26,16 @@ def terraform(args) :
     print os.getcwd() #debug - remove when done
     subprocess.call(["terraform", "init"])
     if args.apply :
-        print "Building {} for you!".format(args.op_num)
+        print "[!] Building {} for you!".format(args.op_num)
         subprocess.call(["terraform", "apply", "--auto-approve"])
     elif args.destroy :
-        print "Initiating destruct sequence of {} for you!".format(args.op_num)
+        print "[!] Initiating the destruct sequence of {}!".format(args.op_num)
         subprocess.call(["terraform", "destroy", "--auto-approve"])
     elif args.output :
-        print "Finding information on {} for you!".format(args.op_num)
+        print "[!] Finding information on {}!".format(args.op_num)
         subprocess.call(["terraform", "output"])
     else :
-        subprocess.call(["numenor", "-h"])
+        print "[ERROR] Incorrect options! Please refer to 'numenor -h' for correct syntax!"
 
 
 #def update(args) :
