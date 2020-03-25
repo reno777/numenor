@@ -12,7 +12,7 @@ import subprocess
 
 #This is the program parsing funciton. This is what spins up and tears down the infrastructure.
 def prog_parser() :
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(prog='numenor')
     parser.add_argument("-a", "--apply", help="Applies the infrastructure and spins up the machines.", action="store_true")
     parser.add_argument("-d", "--destroy", help="Destroys any current infrastructure that is spun up.", action="store_true")
     parser.add_argument("-o", "--output", help="Shows the infrastructure information.", action="store_true")
