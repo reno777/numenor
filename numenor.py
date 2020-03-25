@@ -20,6 +20,9 @@ def prog_parser() :
     parser.add_argument("--ops2", help="Uses OPS2 as target infrasture.", action="store_true")
     parser.add_argument("--ops3", help="Uses OPS3 as target infrasture.", action="store_true")
     args = parser.parse_args()
+    return args
+
+def numenor_main(args) :
     terra = "terraform apply --auto-approve"
     terrd = "terraform destroy --auto-approve"
     terro = "terraform output"
@@ -87,4 +90,4 @@ def prog_parser() :
             print "[!!!] Please specify the infrastructure to query!"
 
 if __name__ == "__main__" :
-    prog_parser()
+    numenor_main(prog_parser())
