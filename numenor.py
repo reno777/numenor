@@ -25,9 +25,9 @@ def prog_parser() :
 #Used to spin up, tear down, and query the infrastructure.
 def terraform(args) :
     os.chdir("/etc/terraform/{}".format(args.op_num))
-    subprocess.call(["terraform", "init"])
     if args.apply :
         print "\n[!] Building {} for you!\n".format(args.op_num)
+        subprocess.call(["terraform", "init"])
         subprocess.call(["terraform", "apply", "--auto-approve"])
     elif args.destroy :
         print "\n[!] Initiating the destruct sequence of {}!\n".format(args.op_num)
