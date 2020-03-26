@@ -3,6 +3,7 @@
 """
 ### AUTHOR: 0xreno
 ### LICENSE: GNU-GPL v3.0
+### VERSION: 2.0
 """
 
 #Libraries
@@ -10,14 +11,14 @@ import argparse
 import os
 import subprocess
 
-#Parses and creates arguements as an object from commandline arugments.
+#Parses and creates arguements as an object from commandline input.
 def prog_parser() :
     parser = argparse.ArgumentParser(prog='numenor')
     parser.add_argument("-a", "--apply", help="Applies the infrastructure and spins up the machines.", action="store_true")
     parser.add_argument("-d", "--destroy", help="Destroys any current infrastructure that is spun up.", action="store_true")
     parser.add_argument("-o", "--output", help="Shows the infrastructure information.", action="store_true")
     #parser.add_argument("--update", help="Updates Numenor code to the latest version.". action="store_true")
-    parser.add_argument("op_num", help="Specifies the Op directory to use.")
+    parser.add_argument("op_num", help="Specifies the Op directory to use.", choices=['ops1', 'ops2', 'ops3'])
     args = parser.parse_args()
     return args
 
