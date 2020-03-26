@@ -3,88 +3,41 @@
 """
 ### AUTHOR: 0xreno
 ### LICENSE: GNU-GPL v3.0
+### VERSION: 2.0
 """
 
-#Below are all of the module imports
+#Libraries
 import argparse
 import os
 import subprocess
 
-#This is the program parsing funciton. This is what spins up and tears down the infrastructure.
+#Parses and creates arguements as an object from commandline input.
 def prog_parser() :
     parser = argparse.ArgumentParser(prog='numenor')
     parser.add_argument("-a", "--apply", help="Applies the infrastructure and spins up the machines.", action="store_true")
     parser.add_argument("-d", "--destroy", help="Destroys any current infrastructure that is spun up.", action="store_true")
     parser.add_argument("-o", "--output", help="Shows the infrastructure information.", action="store_true")
-    parser.add_argument("--ops1", help="Uses OPS1 as target infrasture.", action="store_true")
-    parser.add_argument("--ops2", help="Uses OPS2 as target infrasture.", action="store_true")
-    parser.add_argument("--ops3", help="Uses OPS3 as target infrasture.", action="store_true")
+    #parser.add_argument("--update", help="Updates Numenor code to the latest version.". action="store_true")
+    parser.add_argument("op_num", help="Specifies the Op directory to use.", choices=['ops1', 'ops2', 'ops3'])
     args = parser.parse_args()
-    terra = "terraform apply --auto-approve"
-    terrd = "terraform destroy --auto-approve"
-    terro = "terraform output"
-    if args.apply :
-        if args.ops1 :
-            print "[!] Spinning up OPS1"
-            os.chdir("/etc/terraform/ops1")
-            print os.getcwd() #debug
-            subprocess.call(["terraform", "init"])
-            subprocess.call(terra, shell=True)
-        elif args.ops2 :
-            print "[!] Spinning up OPS2!"
-            os.chdir("/etc/terraform/ops2")
-            print os.getcwd() #debug
-            subprocess.call(["terraform", "init"])
-            subprocess.call(terra, shell=True)
-        elif args.ops3 :
-            print "[!] Spinning up OPS3!"
-            os.chdir("/etc/terraform/ops3")
-            print os.getcwd() #debug
-            subprocess.call(["terraform", "init"])
-            subprocess.call(terra, shell=True)
-        else :
-            print "[!!!] Please specify the infrastructure to apply!"
-        print "[DEBUG] Infrastructure has been built!"
-    if args.destroy :
-        if args.ops1 : 
-            print "[!] Destroying OPS1!"
-            os.chdir("/etc/terraform/ops1")
-            print os.getcwd() #debug
-            subprocess.call(["terraform", "init"])
-            subprocess.call(terrd, shell=True)
-        elif args.ops2 :
-            print "[!] Destroying OPS2!"
-            os.chdir("/etc/terraform/ops2")
-            print os.getcwd() #debug
-            subprocess.call(["terraform", "init"])
-            subprocess.call(terrd, shell=True)
-        elif args.ops3 :
-            print "[!] Destroying OPS3!"
-            os.chdir("/etc/terraform/ops3")
-            print os.getcwd() #debug
-            subprocess.call(["terraform", "init"])
-            subprocess.call(terrd, shell=True)
-        else :
-            print "[!!!] Please specify the infrastructure to destroy!"
-        print "[DEBUG] Infrastructure has been destroyed!"
-    if args.output :
-        if args.ops1 : 
-            print "[!] Querying OPS1!"
-            os.chdir("/etc/terraform/ops1")
-            print os.getcwd() #debug
-            subprocess.call(terro, shell=True)
-        elif args.ops2 :
-            print "[!] Querying OPS2!"
-            os.chdir("/etc/terraform/ops2")
-            print os.getcwd() #debug
-            subprocess.call(terro, shell=True)
-        elif args.ops3 :
-            print "[!] Querying OPS3!"
-            os.chdir("/etc/terraform/ops3")
-            print os.getcwd() #debug
-            subprocess.call(terro, shell=True)
-        else :
-            print "[!!!] Please specify the infrastructure to query!"
+    return args
 
+#Used to spin up, tear down, and query the infrastructure.
+def terraform(args) :
+    os.chdir("/etc/terraform/{}".format(args.op_num))
+    if args.apply :
+        print "\n[!] Building {} for you!\n".format(args.op_num)
+        subprocess.call(["terraform", "init"])
+        subprocess.call(["terraform", "apply", "--auto-approve"])
+    elif args.destroy :
+        print "\n[!] Initiating the destruct sequence of {}!\n".format(args.op_num)
+        subprocess.call(["terraform", "destroy", "--auto-approve"])
+    elif args.output :
+        print "\n[!] Finding information on {}!\n".format(args.op_num)
+        subprocess.call(["terraform", "output"])
+    else :
+        print "\n[ERROR] Incorrect options! Please refer to 'numenor -h' for correct syntax!\n"
+
+#Main function call
 if __name__ == "__main__" :
-    prog_parser()
+    terraform(prog_parser())
