@@ -5,12 +5,12 @@
 ### LICENSE: GNU-GPL v3.0
 """
 
-#Below are all of the module imports
+#Libraries
 import argparse
 import os
 import subprocess
 
-#This is the program parsing funciton. This is what spins up and tears down the infrastructure.
+#Parses and creates arguements as an object from commandline arugments.
 def prog_parser() :
     parser = argparse.ArgumentParser(prog='numenor')
     parser.add_argument("-a", "--apply", help="Applies the infrastructure and spins up the machines.", action="store_true")
@@ -21,24 +21,22 @@ def prog_parser() :
     args = parser.parse_args()
     return args
 
+#Used to spin up, tear down, and query the infrastructure.
 def terraform(args) :
     os.chdir("/etc/terraform/{}".format(args.op_num))
-    print os.getcwd() #debug - remove when done
     subprocess.call(["terraform", "init"])
     if args.apply :
-        print "[!] Building {} for you!".format(args.op_num)
+        print "\n[!] Building {} for you!\n".format(args.op_num)
         subprocess.call(["terraform", "apply", "--auto-approve"])
     elif args.destroy :
-        print "[!] Initiating the destruct sequence of {}!".format(args.op_num)
+        print "\n[!] Initiating the destruct sequence of {}!\n".format(args.op_num)
         subprocess.call(["terraform", "destroy", "--auto-approve"])
     elif args.output :
-        print "[!] Finding information on {}!".format(args.op_num)
+        print "\n[!] Finding information on {}!\n".format(args.op_num)
         subprocess.call(["terraform", "output"])
     else :
-        print "[ERROR] Incorrect options! Please refer to 'numenor -h' for correct syntax!"
+        print "\n[ERROR] Incorrect options! Please refer to 'numenor -h' for correct syntax!\n"
 
-
-#def update(args) :
-
+#Main function call
 if __name__ == "__main__" :
     terraform(prog_parser())
