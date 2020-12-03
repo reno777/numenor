@@ -15,6 +15,13 @@ variable "sshkey_name"       {}
 variable "op_name"           {}
 variable "ops_num"           {}
 
+terraform {
+    required_providers {
+        digitalocean = {
+            source = "digitalocean/digitalocean"
+        }
+    }
+}
 provider "digitalocean"      {} 
  
 #This sets the sshkey_name value to what is in the terraform.tfvars file. This shouhld be the exact name of the ssh key in Digital Ocean.
