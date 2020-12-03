@@ -198,6 +198,7 @@ resource "null_resource" "dns-redir-provision" {
             "apt update",
             "apt upgrade -y",
             "apt auto-remove -y",
+            "echo 'nameserver 8.8.8.8' >> /etc/resolv.conf", #This line adds a public DNS server in order for the beacon to talk to the server
             "echo 1 > /proc/sys/net/ipv4/ip_forward", #The rest of the lines pushes iptables rules to the machine.
             "iptables -F",
             "iptables -t nat -F",
@@ -265,10 +266,8 @@ resource "null_resource" "c2-https-provision" {
             "pip install slackweb",
             "apt install openjdk-11-jdk -y", #The next 2 lines installs java 8 on the machine.
             "update-java-alternatives -s java-1.11.0-openjdk-amd64",
-            "cd /opt", #The next 21 lines setups Cobalt Strike and the SSL certificates needed for c2-https and c2-lhttps.
-            "git clone https://github.com/certbot/certbot.git",
-            "cd /opt/certbot",
-            "./letsencrypt-auto certonly --standalone -d ${digitalocean_record.https-redir.fqdn} -n --register-unsafely-without-email --agree-tos",
+            "snap install --classic certbot", #The next 21 lines setups Cobalt Strike and the SSL certificates needed for c2-https and c2-lhttps.
+            "certbot certonly --standalone -d ${digitalocean_record.https-redir.fqdn} -n --register-unsafely-without-email --agree-tos",
             "cd /cobaltstrike",
             "chmod -R 700 update teamserver slackhook${var.ops_num}.py agscript",
             "echo ${var.cs_key} | ./update",
@@ -350,10 +349,8 @@ resource "null_resource" "c2-lhttps-provision" {
             "pip install slackweb",
             "apt install openjdk-11-jdk -y", #The next 2 lines installs java 8 on the machine.
             "update-java-alternatives -s java-1.11.0-openjdk-amd64",
-            "cd /opt", #The next 21 lines setups Cobalt Strike and the SSL certificates needed for c2-https and c2-lhttps.
-            "git clone https://github.com/certbot/certbot.git",
-            "cd /opt/certbot",
-            "./letsencrypt-auto certonly --standalone -d ${digitalocean_record.lhttps-redir.fqdn} -n --register-unsafely-without-email --agree-tos",
+            "snap install --classic certbot", #The next 21 lines setups Cobalt Strike and the SSL certificates needed for c2-https and c2-lhttps.
+            "certbot certonly --standalone -d ${digitalocean_record.lhttps-redir.fqdn} -n --register-unsafely-without-email --agree-tos",
             "cd /cobaltstrike",
             "chmod -R 700 update teamserver slackhook${var.ops_num}.py agscript",
             "echo ${var.cs_key} | ./update",
@@ -442,6 +439,7 @@ resource "null_resource" "c2-dns-provision" {
             "tmux new-session -d -s bot 'cd /cobaltstrike; ./agscript 127.0.0.1 50050 R2-C2 ${random_string.cs_password.result} beaconnotification${var.ops_num}.cna'",
             "systemctl disable systemd-resolved", #This line and the next disables port 53 from being used by default on 18.04
             "systemctl stop systemd-resolved",
+            "echo 'nameserver 8.8.8.8' >> /etc/resolv.conf", #This line adds a public DNS server in order for the beacon to talk to the server
             "iptables -F", #The rest of the lines pushes iptables rules to the machine.
             "iptables -t nat -F",
             "iptables -X",
