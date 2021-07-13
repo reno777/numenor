@@ -22,11 +22,11 @@ terraform {
         }
     }
 }
-provider "digitalocean"      {} 
- 
+provider "digitalocean"      {}
+
 #This sets the sshkey_name value to what is in the terraform.tfvars file. This shouhld be the exact name of the ssh key in Digital Ocean.
 data "digitalocean_ssh_key" "ssh_key_pub_main" {
-    name                = "${var.sshkey_name}" 
+    name                = var.sshkey_name
 }
 
 #This gets the current public IP address of the machine running terraform, which will be used in the iptables rules for each machine.
@@ -43,17 +43,17 @@ resource "random_string" "cs_password" {
 resource "digitalocean_droplet" "jump" {
     image               = "ubuntu-18-04-x64" #The OS the machine will run.
     name                = "${var.op_name}-jumphost" #The name of the machine in digital ocean.
-    region              = "${var.droplet_region}" #Varilable for the region that the machine will be spun up in.
+    region              = var.droplet_region #Varilable for the region that the machine will be spun up in.
     size                = "512mb" #The RAM size being used to spin up the machine. This is what affects cost in Digital Ocean.
     ipv6                = false #Boolean to set wether or not the machine has ipv6 networking.
     private_networking  = false #Boolean to set wether or not the machine is on a private network.
     monitoring          = false #Boolean to set up Digital Ocean Monitoring on the machine. NOTE: This needs to be false in order for the machines to update correctly. If set to true apt becomes locked.
-    ssh_keys            = ["${data.digitalocean_ssh_key.ssh_key_pub_main.fingerprint}"] #This is the ssh key that terraform will use to provision the machines.
+    ssh_keys            = [data.digitalocean_ssh_key.ssh_key_pub_main.fingerprint] #This is the ssh key that terraform will use to provision the machines.
 }
 
-#This null resource provisions or is the setup for the jumphost machine, written in bash. 
+#This null resource provisions or is the setup for the jumphost machine, written in bash.
 resource "null_resource" "jump-provision" {
-    depends_on          = ["digitalocean_droplet.jump"]
+    depends_on          = [digitalocean_droplet.jump]
     provisioner "remote-exec" {
         inline = [
             "export DEBIAN_FRONTEND=noninteractive", #The next 4 lines updates the machine after creation.
@@ -73,32 +73,32 @@ resource "null_resource" "jump-provision" {
             "iptables -t nat -A POSTROUTING -p tcp -d ${digitalocean_droplet.c2-dns.ipv4_address} --dport 50050 -j SNAT --to-source ${digitalocean_droplet.jump.ipv4_address}",
         ]
 
-#This is the connection details terraform uses to connect to the box.    
+#This is the connection details terraform uses to connect to the box.
         connection {
-            host        = "${digitalocean_droplet.jump.ipv4_address}"
+            host        = digitalocean_droplet.jump.ipv4_address
             user        = "root"
             type        = "ssh"
-            private_key = "${chomp(file(var.sshkey_pvt))}"
+            private_key = chomp(file(var.sshkey_pvt))
             timeout     = "2m"
         }
     }
-    
+
 }
 
 resource "digitalocean_droplet" "https-redir" {
     image               = "ubuntu-18-04-x64" #The OS the machine will run.
     name                = "${var.op_name}-mirror-https" #The name of the machine in digital ocean.
-    region              = "${var.droplet_region}" #Varilable for the region that the machine will be spun up in.
+    region              = var.droplet_region #Varilable for the region that the machine will be spun up in.
     size                = "512mb" #The RAM size being used to spin up the machine. This is what affects cost in Digital Ocean.
     ipv6                = false #Boolean to set wether or not the machine has ipv6 networking.
     private_networking  = false #Boolean to set wether or not the machine is on a private network.
     monitoring          = false #Boolean to set up Digital Ocean Monitoring on the machine. NOTE: This needs to be false in order for the machines to update correctly. If set to true apt becomes locked.
-    ssh_keys            = ["${data.digitalocean_ssh_key.ssh_key_pub_main.fingerprint}"] #This is the ssh key that terraform will use to provision the machines.
+    ssh_keys            = [data.digitalocean_ssh_key.ssh_key_pub_main.fingerprint] #This is the ssh key that terraform will use to provision the machines.
 }
 
 #This null resource provisions or is the setup for the https-redir machine, written in bash.
 resource "null_resource" "http-redir-provision" {
-    depends_on          = ["digitalocean_droplet.https-redir"]
+    depends_on          = [digitalocean_droplet.https-redir]
     provisioner "remote-exec" {
         inline = [
             "export DEBIAN_FRONTEND=noninteractive", #The next 4 lines updates the machine after creation.
@@ -123,32 +123,32 @@ resource "null_resource" "http-redir-provision" {
             "iptables -A INPUT -p tcp -s 0.0.0.0/0 --dport 22 -j DROP",
         ]
 
-#This is the connection details terraform uses to connect to the box.    
+#This is the connection details terraform uses to connect to the box.
         connection {
-            host        = "${digitalocean_droplet.https-redir.ipv4_address}"
+            host        = digitalocean_droplet.https-redir.ipv4_address
             user        = "root"
             type        = "ssh"
-            private_key = "${chomp(file(var.sshkey_pvt))}"
+            private_key = chomp(file(var.sshkey_pvt))
             timeout     = "2m"
         }
     }
-    
+
 }
 
 resource "digitalocean_droplet" "lhttps-redir" {
     image               = "ubuntu-18-04-x64" #The OS the machine will run.
     name                = "${var.op_name}-mirror-lhttps" #The name of the machine in digital ocean.
-    region              = "${var.droplet_region}" #Varilable for the region that the machine will be spun up in.
+    region              = var.droplet_region #Varilable for the region that the machine will be spun up in.
     size                = "512mb" #The RAM size being used to spin up the machine. This is what affects cost in Digital Ocean.
     ipv6                = false #Boolean to set wether or not the machine has ipv6 networking.
     private_networking  = false #Boolean to set wether or not the machine is on a private network.
     monitoring          = false #Boolean to set up Digital Ocean Monitoring on the machine. NOTE: This needs to be false in order for the machines to update correctly. If set to true apt becomes locked.
-    ssh_keys            = ["${data.digitalocean_ssh_key.ssh_key_pub_main.fingerprint}"] #This is the ssh key that terraform will use to provision the machines.
+    ssh_keys            = [data.digitalocean_ssh_key.ssh_key_pub_main.fingerprint] #This is the ssh key that terraform will use to provision the machines.
 }
 
 #This null resource provisions or is the setup for the lhttps-redir machine, written in bash.
 resource "null_resource" "lhttps-redir-provision" {
-    depends_on          = ["digitalocean_droplet.lhttps-redir"]
+    depends_on          = [digitalocean_droplet.lhttps-redir]
     provisioner "remote-exec" {
         inline = [
             "export DEBIAN_FRONTEND=noninteractive", #The next 4 lines updates the machine after creation.
@@ -173,32 +173,32 @@ resource "null_resource" "lhttps-redir-provision" {
             "iptables -A INPUT -p tcp -s 0.0.0.0/0 --dport 22 -j DROP",
         ]
 
-#This is the connection details terraform uses to connect to the box.    
+#This is the connection details terraform uses to connect to the box.
         connection {
-            host        = "${digitalocean_droplet.lhttps-redir.ipv4_address}"
+            host        = digitalocean_droplet.lhttps-redir.ipv4_address
             user        = "root"
             type        = "ssh"
-            private_key = "${chomp(file(var.sshkey_pvt))}"
+            private_key = chomp(file(var.sshkey_pvt))
             timeout     = "2m"
         }
     }
-    
+
 }
 
 resource "digitalocean_droplet" "dns-redir" {
     image               = "ubuntu-18-04-x64" #The OS the machine will run.
     name                = "${var.op_name}-mirror-dns" #The name of the machine in digital ocean.
-    region              = "${var.droplet_region}" #Varilable for the region that the machine will be spun up in.
+    region              = var.droplet_region #Varilable for the region that the machine will be spun up in.
     size                = "512mb" #The RAM size being used to spin up the machine. This is what affects cost in Digital Ocean.
     ipv6                = false #Boolean to set wether or not the machine has ipv6 networking.
     private_networking  = false #Boolean to set wether or not the machine is on a private network.
     monitoring          = false #Boolean to set up Digital Ocean Monitoring on the machine. NOTE: This needs to be false in order for the machines to update correctly. If set to true apt becomes locked.
-    ssh_keys            = ["${data.digitalocean_ssh_key.ssh_key_pub_main.fingerprint}"] #This is the ssh key that terraform will use to provision the machines.
+    ssh_keys            = [data.digitalocean_ssh_key.ssh_key_pub_main.fingerprint] #This is the ssh key that terraform will use to provision the machines.
 }
 
 #This null resource provisions or is the setup for the dns-redir machine, written in bash.
 resource "null_resource" "dns-redir-provision" {
-    depends_on          = ["digitalocean_droplet.dns-redir"]
+    depends_on          = [digitalocean_droplet.dns-redir]
     provisioner "remote-exec" {
         inline = [
             "export DEBIAN_FRONTEND=noninteractive", #The next 4 lines updates the machine after creation.
@@ -224,12 +224,12 @@ resource "null_resource" "dns-redir-provision" {
             "iptables -A INPUT -p tcp -s 0.0.0.0/0 --dport 22 -j DROP",
         ]
 
-#This is the connection details terraform uses to connect to the box.    
+#This is the connection details terraform uses to connect to the box.
         connection {
-            host        = "${digitalocean_droplet.dns-redir.ipv4_address}"
+            host        = digitalocean_droplet.dns-redir.ipv4_address
             user        = "root"
             type        = "ssh"
-            private_key = "${chomp(file(var.sshkey_pvt))}"
+            private_key = chomp(file(var.sshkey_pvt))
             timeout     = "2m"
         }
     }
@@ -238,27 +238,27 @@ resource "null_resource" "dns-redir-provision" {
 resource "digitalocean_droplet" "c2-https" {
     image               = "ubuntu-18-04-x64" #The OS the machine will run.
     name                = "${var.op_name}-c2-https" #The name of the machine in digital ocean.
-    region              = "${var.droplet_region}" #Varilable for the region that the machine will be spun up in.
+    region              = var.droplet_region #Varilable for the region that the machine will be spun up in.
     size                = "2gb" #The RAM size being used to spin up the machine. This is what affects cost in Digital Ocean.
     ipv6                = false #Boolean to set wether or not the machine has ipv6 networking.
     private_networking  = false #Boolean to set wether or not the machine is on a private network.
     monitoring          = false #Boolean to set up Digital Ocean Monitoring on the machine. NOTE: This needs to be false in order for the machines to update correctly. If set to true apt becomes locked.
-    ssh_keys            = ["${data.digitalocean_ssh_key.ssh_key_pub_main.fingerprint}"] #This is the ssh key that terraform will use to provision the machines.
+    ssh_keys            = [data.digitalocean_ssh_key.ssh_key_pub_main.fingerprint] #This is the ssh key that terraform will use to provision the machines.
 }
 
 #This null resource provisions or is the setup for the c2-https machine, written in bash. The file provisioner transfers the files needed to setup Cobalt Strike. These files need to be place on the machine prior to the script running.
 resource "null_resource" "c2-https-provision" {
-    depends_on          = ["digitalocean_droplet.c2-https"]
+    depends_on          = [digitalocean_droplet.c2-https]
     provisioner "file" {
         source          = "/cobaltstrike"
         destination     = "/."
 
-#This is the connection details terraform uses to connect to the box.    
+#This is the connection details terraform uses to connect to the box.
         connection {
-            host        = "${digitalocean_droplet.c2-https.ipv4_address}"
+            host        = digitalocean_droplet.c2-https.ipv4_address
             user        = "root"
             type        = "ssh"
-            private_key = "${chomp(file(var.sshkey_pvt))}"
+            private_key = chomp(file(var.sshkey_pvt))
             timeout     = "2m"
         }
     }
@@ -307,12 +307,12 @@ resource "null_resource" "c2-https-provision" {
             "iptables -P INPUT DROP",
         ]
 
-#This is the connection details terraform uses to connect to the box.    
+#This is the connection details terraform uses to connect to the box.
         connection {
-            host        = "${digitalocean_droplet.c2-https.ipv4_address}"
+            host        = digitalocean_droplet.c2-https.ipv4_address
             user        = "root"
             type        = "ssh"
-            private_key = "${chomp(file(var.sshkey_pvt))}"
+            private_key = chomp(file(var.sshkey_pvt))
             timeout     = "2m"
         }
     }
@@ -321,27 +321,27 @@ resource "null_resource" "c2-https-provision" {
 resource "digitalocean_droplet" "c2-lhttps" {
     image               = "ubuntu-18-04-x64" #The OS the machine will run.
     name                = "${var.op_name}-c2-lhttps" #The name of the machine in digital ocean.
-    region              = "${var.droplet_region}" #Varilable for the region that the machine will be spun up in.
+    region              = var.droplet_region #Varilable for the region that the machine will be spun up in.
     size                = "2gb" #The RAM size being used to spin up the machine. This is what affects cost in Digital Ocean.
     ipv6                = false #Boolean to set wether or not the machine has ipv6 networking.
     private_networking  = false #Boolean to set wether or not the machine is on a private network.
     monitoring          = false #Boolean to set up Digital Ocean Monitoring on the machine. NOTE: This needs to be false in order for the machines to update correctly. If set to true apt becomes locked.
-    ssh_keys            = ["${data.digitalocean_ssh_key.ssh_key_pub_main.fingerprint}"] #This is the ssh key that terraform will use to provision the machines.
+    ssh_keys            = [data.digitalocean_ssh_key.ssh_key_pub_main.fingerprint] #This is the ssh key that terraform will use to provision the machines.
 }
 
-#This null resource provisions or is the setup for the c2-lhttps machine, written in bash. The file provisioner transfers the files needed to setup Cobalt Strike. These files need to be place on the machine prior to the script running.    
+#This null resource provisions or is the setup for the c2-lhttps machine, written in bash. The file provisioner transfers the files needed to setup Cobalt Strike. These files need to be place on the machine prior to the script running.
 resource "null_resource" "c2-lhttps-provision" {
-    depends_on          = ["digitalocean_droplet.c2-lhttps"]
+    depends_on          = [digitalocean_droplet.c2-lhttps]
     provisioner "file" {
         source          = "/cobaltstrike"
         destination     = "/."
 
-#This is the connection details terraform uses to connect to the box.    
+#This is the connection details terraform uses to connect to the box.
         connection {
-            host        = "${digitalocean_droplet.c2-lhttps.ipv4_address}"
+            host        = digitalocean_droplet.c2-lhttps.ipv4_address
             user        = "root"
             type        = "ssh"
-            private_key = "${chomp(file(var.sshkey_pvt))}"
+            private_key = chomp(file(var.sshkey_pvt))
             timeout     = "2m"
         }
     }
@@ -389,12 +389,12 @@ resource "null_resource" "c2-lhttps-provision" {
             "iptables -A INPUT -s ${chomp(data.http.local_ip.body)} -j ACCEPT",
             "iptables -P INPUT DROP",
         ]
-#This is the connection details terraform uses to connect to the box.    
+#This is the connection details terraform uses to connect to the box.
         connection {
-            host        = "${digitalocean_droplet.c2-lhttps.ipv4_address}"
+            host        = digitalocean_droplet.c2-lhttps.ipv4_address
             user        = "root"
             type        = "ssh"
-            private_key = "${chomp(file(var.sshkey_pvt))}"
+            private_key = chomp(file(var.sshkey_pvt))
             timeout     = "2m"
         }
     }
@@ -403,27 +403,27 @@ resource "null_resource" "c2-lhttps-provision" {
 resource "digitalocean_droplet" "c2-dns" {
     image               = "ubuntu-18-04-x64" #The OS the machine will run.
     name                = "${var.op_name}-c2-dns" #The name of the machine in digital ocean.
-    region              = "${var.droplet_region}" #Varilable for the region that the machine will be spun up in.
+    region              = var.droplet_region #Varilable for the region that the machine will be spun up in.
     size                = "2gb" #The RAM size being used to spin up the machine. This is what affects cost in Digital Ocean.
     ipv6                = false #Boolean to set wether or not the machine has ipv6 networking.
     private_networking  = false #Boolean to set wether or not the machine is on a private network.
     monitoring          = false #Boolean to set up Digital Ocean Monitoring on the machine. NOTE: This needs to be false in order for the machines to update correctly. If set to true apt becomes locked.
-    ssh_keys            = ["${data.digitalocean_ssh_key.ssh_key_pub_main.fingerprint}"] #This is the ssh key that terraform will use to provision the machines.
+    ssh_keys            = [data.digitalocean_ssh_key.ssh_key_pub_main.fingerprint] #This is the ssh key that terraform will use to provision the machines.
 }
 
-#This null resource provisions or is the setup for the c2-dns machine, written in bash. The file provisioner transfers the files needed to setup Cobalt Strike. These files need to be place on the machine prior to the script running.    
+#This null resource provisions or is the setup for the c2-dns machine, written in bash. The file provisioner transfers the files needed to setup Cobalt Strike. These files need to be place on the machine prior to the script running.
 resource "null_resource" "c2-dns-provision" {
-    depends_on          = ["digitalocean_droplet.c2-dns"]
+    depends_on          = [digitalocean_droplet.c2-dns]
     provisioner "file" {
         source          = "/cobaltstrike"
         destination     = "/."
 
-#This is the connection details terraform uses to connect to the box.    
+#This is the connection details terraform uses to connect to the box.
         connection {
-            host        = "${digitalocean_droplet.c2-dns.ipv4_address}"
+            host        = digitalocean_droplet.c2-dns.ipv4_address
             user        = "root"
             type        = "ssh"
-            private_key = "${chomp(file(var.sshkey_pvt))}"
+            private_key = chomp(file(var.sshkey_pvt))
             timeout     = "2m"
         }
     }
@@ -460,12 +460,12 @@ resource "null_resource" "c2-dns-provision" {
             "iptables -P INPUT DROP",
         ]
 
-#This is the connection details terraform uses to connect to the box.    
+#This is the connection details terraform uses to connect to the box.
         connection {
-            host        = "${digitalocean_droplet.c2-dns.ipv4_address}"
+            host        = digitalocean_droplet.c2-dns.ipv4_address
             user        = "root"
             type        = "ssh"
-            private_key = "${chomp(file(var.sshkey_pvt))}"
+            private_key = chomp(file(var.sshkey_pvt))
             timeout     = "2m"
         }
     }
@@ -473,50 +473,50 @@ resource "null_resource" "c2-dns-provision" {
 
 #The following 5 resources are for the setup for the domains needed for the environment
 resource "digitalocean_record" "https-redir" {
-    domain              = "${var.domain_front1}"
+    domain              = var.domain_front1
     type                = "A"
     name                = "www"
-    value               = "${digitalocean_droplet.https-redir.ipv4_address}"
+    value               = digitalocean_droplet.https-redir.ipv4_address
 }
 
 resource "digitalocean_record" "lhttps-redir" {
-    domain              = "${var.domain_front2}"
+    domain              = var.domain_front2
     type                = "A"
     name                = "www"
-    value               = "${digitalocean_droplet.lhttps-redir.ipv4_address}"
+    value               = digitalocean_droplet.lhttps-redir.ipv4_address
 }
 
 resource "digitalocean_record" "dns-redir" {
-    domain              = "${var.domain_dns}"
-    type                = "A" 
+    domain              = var.domain_dns
+    type                = "A"
     name                = "ns1"
-    value               = "${digitalocean_droplet.dns-redir.ipv4_address}"
+    value               = digitalocean_droplet.dns-redir.ipv4_address
 }
 
 resource "digitalocean_record" "dns-ns" {
-    domain              = "${var.domain_dns}"
-    type                = "NS" 
+    domain              = var.domain_dns
+    type                = "NS"
     name                = "dns"
     value               = "${digitalocean_record.dns-redir.fqdn}."
 }
 
 resource "digitalocean_record" "jump-https" {
-    domain              = "${var.domain_main}"
+    domain              = var.domain_main
     type                = "A"
     name                = "ops${var.ops_num}"
-    value               = "${digitalocean_droplet.jump.ipv4_address}"
+    value               = digitalocean_droplet.jump.ipv4_address
 }
 
 resource "digitalocean_record" "jump-lhttps" {
-    domain              = "${var.domain_main}"
+    domain              = var.domain_main
     type                = "A"
     name                = "backup${var.ops_num}"
-    value               = "${digitalocean_droplet.jump.ipv4_address}"
+    value               = digitalocean_droplet.jump.ipv4_address
 }
 
 resource "digitalocean_record" "jump-dns" {
-    domain              = "${var.domain_main}"
+    domain              = var.domain_main
     type                = "A"
     name                = "dns${var.ops_num}"
-    value               = "${digitalocean_droplet.jump.ipv4_address}"
+    value               = digitalocean_droplet.jump.ipv4_address
 }
